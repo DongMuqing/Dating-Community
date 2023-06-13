@@ -7,5 +7,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @Created by Muqing
  */
 @Mapper
-public class UserDao {
+public interface UserDao {
 }

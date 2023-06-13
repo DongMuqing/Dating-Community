@@ -18,8 +18,6 @@ import java.util.List;
 @Mapper
 public interface ArticleDao {
 
-    //查询所有
-//    @Result(create_time="")
     @Select("select * from tb_article ")
     @Results({
             @Result(column="id", property="id", jdbcType= JdbcType.INTEGER, id=true),
