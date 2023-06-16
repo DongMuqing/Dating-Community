@@ -25,4 +25,7 @@ public class Dynamic {
     private String location;
     @TableField(value="upvote_num")
     private Integer upvoteNum;
+
+    @TableField(value="music_url")
+    private String musicUrl;
 }
