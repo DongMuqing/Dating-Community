@@ -28,4 +28,7 @@ public class Dynamic {
 
     @TableField(value="music_url")
     private String musicUrl;
+
+    @TableField(value="img_srclist")
+    private  String imgSrclist;
 }

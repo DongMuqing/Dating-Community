@@ -12,6 +12,11 @@ spring:
       max-file-size: 20MB
       # 设置总上传的文件大小
       max-request-size: 100MB
+  tomcat:
+    remote-ip-header: x-forward-for
+    uri-encoding: UTF-8
+    max-threads: 1000
+    max-http-header-size: 8096
 
 server:
   tomcat:

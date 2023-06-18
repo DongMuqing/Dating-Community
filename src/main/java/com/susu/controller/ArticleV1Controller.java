@@ -26,7 +26,6 @@ public class ArticleV1Controller {
     @GetMapping
     public Result getAll(){
         List<Article> articles = articleService.getAll();
-        log.info(articles.toString());
         Integer code = articles != null ? Code.GET_OK : Code.GET_ERR;
         String msg = articles != null ? "查询成功" : "数据查询失败，请重试！";
         return new Result(articles,code,msg);

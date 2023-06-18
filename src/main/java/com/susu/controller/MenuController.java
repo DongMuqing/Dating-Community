@@ -31,8 +31,6 @@ public class MenuController {
     @GetMapping
     public Result getAll(){
         List<Menu> menus = menuService.getAll();
-        log.info("执行了");
-        log.info(menus.toString());
         Integer code = menus != null ? Code.GET_OK : Code.GET_ERR;
         String msg = menus != null ? "查询成功" : "数据查询失败，请重试！";
         return new Result(menus,code,msg);
