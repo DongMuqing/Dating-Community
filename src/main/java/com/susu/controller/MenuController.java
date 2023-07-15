@@ -23,16 +23,15 @@ import java.util.List;
 @RequestMapping("api/{version}/menu")
 @CrossOrigin
 @Slf4j
-@ApiVersion(1)
 public class MenuController {
     @Autowired
     private MenuService menuService;
 
     @GetMapping
-    public Result getAll(){
+    public Result getAll() {
         List<Menu> menus = menuService.getAll();
         Integer code = menus != null ? Code.GET_OK : Code.GET_ERR;
         String msg = menus != null ? "查询成功" : "数据查询失败，请重试！";
-        return new Result(menus,code,msg);
+        return new Result(menus, code, msg);
     }
 }

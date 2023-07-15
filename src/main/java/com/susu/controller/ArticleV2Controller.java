@@ -20,7 +20,6 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("api/{version}/article")
-//跨域
 @CrossOrigin
 @Slf4j
 @ApiVersion(2)
