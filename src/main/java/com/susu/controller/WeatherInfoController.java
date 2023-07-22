@@ -1,22 +1,13 @@
 package com.susu.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.susu.damian.Code;
-import com.susu.damian.Menu;
+import com.alibaba.fastjson.TypeReference;
 import com.susu.damian.Result;
 import com.susu.service.impl.AmapServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-
+import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * @Date:2023/7/15 20:58
@@ -30,28 +21,20 @@ public class WeatherInfoController {
     @Autowired
     private AmapServiceImpl amapService;
 
-    @GetMapping
-    public Result getWeather() {
-        String province = "";
+    @PostMapping
+    public Result getWeather(@RequestBody String city) {
+        //json写法
         Integer code = 0;
         String msg = "";
-        HashMap<String, String> weatherMap = new HashMap<>();
-        String ip = amapService.getIp();
-        HashMap<String, String> ipMap = JSON.parseObject(ip, HashMap.class);
-        Set<Map.Entry<String, String>> en = ipMap.entrySet();
-        for (Map.Entry<String, String> entry : en) {
-            if (entry.getKey() == "province") {
-                province = entry.getValue();
-                weatherMap = JSON.parseObject(amapService.getWeather(province), HashMap.class);
-                code = Code.GET_OK;
-                msg = "查询成功";
-            } else if (entry.getKey() == "status" && entry.getValue() == "0") {
-                //查询失败
-                weatherMap = null;
-                code = Code.GET_ERR;
-                msg = "数据查询失败，请重试！";
-            }
-        }
+        //取出返回json中的city
+        HashMap<String, String> cityMap = JSON.parseObject(city, new TypeReference<HashMap<String, String>>() {
+        });
+        String firstKey = cityMap.keySet().iterator().next();
+        String citys = cityMap.get(firstKey);
+        //传入获取天气的方法中进行获取天气信息
+        String data = amapService.getWeather(citys);
+        HashMap<String, String> weatherMap = JSON.parseObject(data, HashMap.class);
         return new Result(weatherMap, code, msg);
     }
+
 }
