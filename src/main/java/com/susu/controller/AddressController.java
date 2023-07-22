@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSON;
 import com.susu.damian.Code;
 import com.susu.damian.Result;
 import com.susu.service.impl.AmapServiceImpl;
+import com.susu.util.IPUtil;
+import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -35,10 +37,19 @@ public class AddressController {
         String msg = ipMap != null ? "查询成功" : "数据查询失败，请重试！";
         return new Result(ipMap, code, msg);
     }
-    @GetMapping("/dizhi")
-    public String getIp(HttpServletRequest request) {
-        String visitorIp = request.getRemoteAddr();
-        // 处理访问者IP地址
-        return visitorIp;
+
+    @GetMapping("/address")
+    public Result userController(HttpServletRequest request) {
+        UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("user-agent"));
+        HashMap<String,String> infoMap=new HashMap<>();
+        String clientType = userAgent.getOperatingSystem().getDeviceType().toString();
+        infoMap.put("clientType",clientType);
+        String os = userAgent.getOperatingSystem().getName();
+        infoMap.put("os",os);
+        String ip = IPUtil.getIpAddr(request);
+        infoMap.put("ip",ip);
+        String browser = userAgent.getBrowser().toString();
+        infoMap.put("browser",browser);
+        return new Result(infoMap,20001,"ok");
     }
 }
