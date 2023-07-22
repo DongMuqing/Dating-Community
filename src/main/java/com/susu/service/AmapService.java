@@ -13,6 +13,6 @@ import java.util.List;
 @Transactional
 @Service
 public interface AmapService {
-   String getIp();
+   String getAddress(String ip);
    String getWeather(String province);
  }

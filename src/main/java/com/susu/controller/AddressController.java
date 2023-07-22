@@ -30,12 +30,14 @@ public class AddressController {
     private AmapServiceImpl amapService;
 
     @GetMapping
-    public Result getAddress() {
-        String ip = amapService.getIp();
-        HashMap<String, String> ipMap = JSON.parseObject(ip, HashMap.class);
-        Integer code = ipMap != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = ipMap != null ? "查询成功" : "数据查询失败，请重试！";
-        return new Result(ipMap, code, msg);
+    public Result getAddress(HttpServletRequest request) {
+        String ip = IPUtil.getIpAddr(request);
+        log.info(ip);
+        String address = amapService.getAddress(ip);
+        HashMap<String, String> addressMap = JSON.parseObject(address, HashMap.class);
+        Integer code = addressMap != null ? Code.GET_OK : Code.GET_ERR;
+        String msg = addressMap != null ? "查询成功" : "数据查询失败，请重试！";
+        return new Result(addressMap, code, msg);
     }
 
     @GetMapping("/address")
