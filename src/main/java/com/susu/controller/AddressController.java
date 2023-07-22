@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 
 /**
@@ -33,5 +34,11 @@ public class AddressController {
         Integer code = ipMap != null ? Code.GET_OK : Code.GET_ERR;
         String msg = ipMap != null ? "查询成功" : "数据查询失败，请重试！";
         return new Result(ipMap, code, msg);
+    }
+    @GetMapping("/dizhi")
+    public String getIp(HttpServletRequest request) {
+        String visitorIp = request.getRemoteAddr();
+        // 处理访问者IP地址
+        return visitorIp;
     }
 }
