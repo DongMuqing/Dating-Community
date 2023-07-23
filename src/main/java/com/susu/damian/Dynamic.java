@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 /**
  * @Date:2023/6/13 17:33
  * @Created by Muqing
@@ -19,7 +21,7 @@ import lombok.*;
 public class Dynamic {
     private Integer id;
     @TableField(value="create_time")
-    private String createTime;
+    private LocalDateTime createTime;
     private String title;
     private String content;
     private String location;
