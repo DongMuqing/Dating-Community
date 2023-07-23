@@ -31,12 +31,12 @@ public class VisitorInfo {
     private String browser;
 
     private String address;
-    public VisitorInfo(LocalDateTime accessTime, String ip, String clientType, String os, String browser,String address) {
+    public VisitorInfo(LocalDateTime accessTime, String ip, String clientType, String os, String browser) {
         this.accessTime = accessTime;
         this.ip = ip;
         this.clientType = clientType;
         this.os = os;
         this.browser = browser;
-        this.address=address;
+
     }
 }

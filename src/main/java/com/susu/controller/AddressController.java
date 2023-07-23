@@ -2,7 +2,7 @@ package com.susu.controller;
 
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.TypeReference;
 import com.susu.damian.Code;
 import com.susu.damian.Result;
 import com.susu.damian.VisitorInfo;
@@ -13,16 +13,11 @@ import com.susu.util.TimeUtil;
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * @Date:2023/7/20 16:33
@@ -50,7 +45,7 @@ public class AddressController {
     }
 
 
-    @GetMapping("/visitorInfo")
+    @PostMapping("/visitorInfo")
     //访问者信息
     public Result visitorInfo(HttpServletRequest request) {
         int flag = 0;
@@ -60,13 +55,8 @@ public class AddressController {
         String os = userAgent.getOperatingSystem().getName();
         String ip = IPUtil.getIpAddr(request);
         LocalDateTime accessTime = TimeUtil.getLocalDateTime();
-        String address = amapService.getAddress(ip);
-        HashMap<String, List<String>> addressMap = JSON.parseObject(address, HashMap.class);
-        List<String> city = addressMap.get("city");
-        if (!city.isEmpty()) {
-            VisitorInfo visitorInfo = new VisitorInfo(accessTime, ip, clientType, os, browser, city.get(0));
-            flag = visitorInfoDao.insert(visitorInfo);
-        }
+        VisitorInfo visitorInfo = new VisitorInfo(accessTime, ip, clientType, os, browser);
+        flag = visitorInfoDao.insert(visitorInfo);
         Integer code = flag == 1 ? Code.GET_OK : Code.GET_ERR;
         String msg = flag == 1 ? "插入成功" : "数据插入失败，请重试！";
         return new Result(null, code, msg);
