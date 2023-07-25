@@ -23,16 +23,16 @@ public class AmapServiceImpl implements AmapService {
     //显示所有的天气
     private final String extensions="all";
     @Override
-    public String getAddress(String ip) {
-        String url = "https://restapi.amap.com/v3/ip?key="+key+"&ip=" + ip;
+    public String getAddress() {
+        String url = "https://restapi.amap.com/v3/ip?key="+key;
         URI uri = URI.create(url);
         String response = restTemplate.getForObject(uri, String.class);
         return response;
     }
 
     @Override
-    public String getWeather(String province) {
-        String url = "https://restapi.amap.com/v3/weather/weatherInfo?city="+province+"&key="+key+"&extensions="+extensions;
+    public String getWeather(String city) {
+        String url = "https://restapi.amap.com/v3/weather/weatherInfo?city="+city+"&key="+key+"&extensions="+extensions;
         URI uri = URI.create(url);
         String response = restTemplate.getForObject(uri, String.class);
         return response;
