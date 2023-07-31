@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.Resource;
 import java.net.URI;
-import java.util.*;
+
 
 /**
  * @Date:2023/7/15 20:43
@@ -23,8 +23,8 @@ public class AmapServiceImpl implements AmapService {
     //显示所有的天气
     private final String extensions="all";
     @Override
-    public String getAddress() {
-        String url = "https://restapi.amap.com/v3/ip?key="+key;
+    public String getAddress(String ip) {
+        String url = "https://restapi.amap.com/v3/ip?key="+key+"&ip=" + ip;
         URI uri = URI.create(url);
         String response = restTemplate.getForObject(uri, String.class);
         return response;

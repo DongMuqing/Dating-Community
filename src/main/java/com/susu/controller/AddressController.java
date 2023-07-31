@@ -35,8 +35,9 @@ public class AddressController {
 
     @GetMapping
     //获取访问者地址信息
-    public Result getAddress() {
-        String address = amapService.getAddress();
+    public Result getAddress(HttpServletRequest request) {
+        String ip = IPUtil.getIpAddr(request);
+        String address = amapService.getAddress(ip);
         HashMap<String, String> addressMap = JSON.parseObject(address, HashMap.class);
         Integer code = addressMap != null ? Code.GET_OK : Code.GET_ERR;
         String msg = addressMap != null ? "查询成功" : "数据查询失败，请重试！";
