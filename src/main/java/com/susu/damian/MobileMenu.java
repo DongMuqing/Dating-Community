@@ -2,10 +2,11 @@ package com.susu.damian;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 /**
- * @Date:2023/6/12 11:30
+ * @Date:2023/7/28 17:32
  * @Created by Muqing
  */
 @Data
@@ -14,7 +15,8 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class Menu {
+@TableName("tb_mobile_menu")
+public class MobileMenu {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private String path;
