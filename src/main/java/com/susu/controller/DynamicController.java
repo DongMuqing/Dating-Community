@@ -1,5 +1,7 @@
 package com.susu.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaIgnore;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.susu.config.ApiVersion;
 import com.susu.damian.Code;
@@ -26,11 +28,15 @@ import java.util.Set;
 @RequestMapping("api/{version}/dynamic")
 @CrossOrigin
 @Slf4j
+@SaCheckLogin
 public class DynamicController {
     @Autowired
     private DynamicDao dynamicDao;
 
+
     @GetMapping
+    //忽略认证
+    @SaIgnore
     public Result getAll() {
         //时间降序查询
         List<Dynamic> dynamics = dynamicDao.selectList(new QueryWrapper<Dynamic>()

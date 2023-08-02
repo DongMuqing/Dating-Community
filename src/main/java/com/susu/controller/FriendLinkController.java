@@ -1,5 +1,7 @@
 package com.susu.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaIgnore;
 import com.susu.damian.Code;
 import com.susu.damian.FriendLink;
 import com.susu.damian.Result;
@@ -21,11 +23,13 @@ import java.util.List;
 @RequestMapping("api/{version}/friendlink")
 @CrossOrigin
 @Slf4j
+@SaCheckLogin
 public class FriendLinkController {
     @Autowired
     private FriendLinkDao  friendLinkDao;
 
     @GetMapping
+    @SaIgnore
     public Result getAll(){
         List<FriendLink> friendLinks = friendLinkDao.selectList(null);
         Integer code = friendLinks != null ? Code.GET_OK : Code.GET_ERR;

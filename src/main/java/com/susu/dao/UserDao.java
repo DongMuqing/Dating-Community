@@ -1,5 +1,7 @@
 package com.susu.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.susu.damian.User;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -7,5 +9,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @Created by Muqing
  */
 @Mapper
-public interface UserDao {
+public interface UserDao extends BaseMapper<User> {
 }

@@ -1,6 +1,7 @@
 package com.susu.controller;
 
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.susu.damian.Code;
@@ -27,6 +28,7 @@ import java.util.HashMap;
 @RequestMapping("api/{version}/ip")
 @CrossOrigin
 @Slf4j
+@SaCheckLogin
 public class AddressController {
     @Autowired
     private AmapServiceImpl amapService;

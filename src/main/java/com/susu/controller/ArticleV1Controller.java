@@ -1,5 +1,7 @@
 package com.susu.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaIgnore;
 import com.susu.damian.Article;
 import com.susu.damian.Code;
 import com.susu.damian.Result;
@@ -18,23 +20,17 @@ import java.util.List;
 @RequestMapping("api/{version}/article")
 @CrossOrigin
 @Slf4j
+@SaCheckLogin
 public class ArticleV1Controller {
     @Autowired
     private ArticleService articleService;
 
     @GetMapping
+    @SaIgnore
     public Result getAll(){
         List<Article> articles = articleService.getAll();
         Integer code = articles != null ? Code.GET_OK : Code.GET_ERR;
         String msg = articles != null ? "查询成功" : "数据查询失败，请重试！";
         return new Result(articles,code,msg);
     }
-
-//    @GetMapping("/{id}")
-//    public Result getById(@PathVariable Integer id){
-//        User users = userService.getById(id);
-//        Integer code = users != null ? Code.GET_OK : Code.GET_ERR;
-//        String msg = users != null ? "查询成功" : "数据查询失败，请重试！";
-//        return new Result(code,users,msg);
-//    }
 }

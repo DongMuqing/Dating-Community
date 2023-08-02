@@ -1,5 +1,7 @@
 package com.susu.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaIgnore;
 import com.susu.config.ApiVersion;
 import com.susu.damian.Code;
 import com.susu.damian.Menu;
@@ -23,11 +25,13 @@ import java.util.List;
 @RequestMapping("api/{version}/menu")
 @CrossOrigin
 @Slf4j
+@SaCheckLogin
 public class MenuController {
     @Autowired
     private MenuService menuService;
 
     @GetMapping
+    @SaIgnore
     public Result getAll() {
         List<Menu> menus = menuService.getAll();
         Integer code = menus != null ? Code.GET_OK : Code.GET_ERR;

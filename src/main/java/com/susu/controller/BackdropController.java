@@ -1,5 +1,7 @@
 package com.susu.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaIgnore;
 import com.susu.config.ApiVersion;
 import com.susu.damian.Backdrop;
 import com.susu.damian.Code;
@@ -23,11 +25,13 @@ import java.util.List;
 @RequestMapping("api/{version}/backdrop")
 @CrossOrigin
 @Slf4j
+@SaCheckLogin
 public class BackdropController {
     @Autowired
     private BackdropDao  backdropDao;
 
     @GetMapping
+    @SaIgnore
     public Result getAll(){
         List<Backdrop> backdrops =backdropDao.selectList(null);
         Integer code = backdrops != null ? Code.GET_OK : Code.GET_ERR;

@@ -1,5 +1,7 @@
 package com.susu.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaIgnore;
 import com.susu.config.ApiVersion;
 import com.susu.damian.Article;
 import com.susu.damian.Code;
@@ -23,11 +25,13 @@ import java.util.List;
 @CrossOrigin
 @Slf4j
 @ApiVersion(2)
+@SaCheckLogin
 public class ArticleV2Controller {
     @Autowired
     private ArticleService articleService;
 
     @GetMapping
+    @SaIgnore
     public Result getAll(){
         List<Article> articles = articleService.getAll();
         log.info(articles.toString());
