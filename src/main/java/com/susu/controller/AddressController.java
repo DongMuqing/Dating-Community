@@ -2,6 +2,7 @@ package com.susu.controller;
 
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaIgnore;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.susu.damian.Code;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * @Date:2023/7/20 16:33
@@ -36,6 +38,7 @@ public class AddressController {
     private VisitorInfoDao visitorInfoDao;
 
     @GetMapping
+    @SaIgnore
     //获取访问者地址信息
     public Result getAddress(HttpServletRequest request) {
         String ip = IPUtil.getIpAddr(request);
@@ -48,6 +51,7 @@ public class AddressController {
 
 
     @PostMapping("/visitorInfo")
+    @SaIgnore
     //访问者信息
     public Result visitorInfo(HttpServletRequest request) {
         int flag = 0;
@@ -62,5 +66,12 @@ public class AddressController {
         Integer code = flag == 1 ? Code.GET_OK : Code.GET_ERR;
         String msg = flag == 1 ? "插入成功" : "数据插入失败，请重试！";
         return new Result(null, code, msg);
+    }
+    @PostMapping("/getVisitorInfo")
+    public Result visitorInfo() {
+        List<VisitorInfo> visitorInfos = visitorInfoDao.selectList(null);
+        Integer code = visitorInfos != null? Code.GET_OK : Code.GET_ERR;
+        String msg = visitorInfos != null ? "查询成功" : "数据查询失败，请重试！";
+        return new Result(visitorInfos,code,msg);
     }
 }
