@@ -53,7 +53,7 @@ public class FriendLinkController {
         FriendLink friendLink = new FriendLink(logoUrl, url, name, intro);
         int friendLinks = friendLinkDao.insert(friendLink);
         Integer code = friendLinks != 0 ? Code.SAVE_OK : Code.SAVE_ERR;
-        String msg = friendLinks != 0 ? "插入成功" : "数据插入失败，请重试！";
+        String msg = friendLinks != 0 ? "提交成功！" : "数据提交失败，请重试！";
         return new Result(null, code, msg);
     }
 

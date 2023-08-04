@@ -1,6 +1,8 @@
 package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.dev33.satoken.session.SaSession;
+import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -31,20 +33,22 @@ public class UserController {
 
     @PostMapping
     @SaIgnore
-    public Result Login(@RequestBody Map<String, Object> map) {
+    public Result Login(@RequestBody User user) {
         Integer code=null;
         QueryWrapper<User> wrapper=new QueryWrapper<>();
-        wrapper.lambda().eq(User::getUsername,map.get("username")).eq(User::getPassword,map.get("password"));
+        wrapper.lambda().eq(User::getUsername,user.getUsername()).eq(User::getPassword,user.getPassword());
         List<User> users = userDao.selectList(wrapper);
         // 第一步：比对前端提交的账号名称、密码
-        if(users!=null) {
+        if(!users.isEmpty()) {
             // 第二步：根据账号id，进行登录
             StpUtil.login(users.get(0));
+            // 第2步，获取 Token  相关参数
+            SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
             code= Code.GET_OK;
-            return new  Result(null,code,"登录成功");
+            return new  Result(tokenInfo,code,"登录成功");
         }
         code= Code.GET_ERR;
-        return new  Result(null,code,"登录成功");
+        return new  Result(null,code,"登录失败");
     }
 
     @PostMapping("logout")

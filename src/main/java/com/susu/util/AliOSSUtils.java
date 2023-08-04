@@ -27,7 +27,7 @@ public class AliOSSUtils {
     /**
      * 上传文件到oss
      * @param file 文件
-     * @param folderPath 上传路径
+     * @param folderPath 上传路径 文件层级
      * @return
      * @throws IOException
      */
@@ -54,7 +54,12 @@ public class AliOSSUtils {
         //文件访问路径(替换自定义域名)
         String url = endpoint.split("//")[0] + "//" + bucketName + "." + endpoint.split("//")[1] + "/" + fileName;
         String originalUrl = endpoint.replace("https://", "https://" + bucketName + ".");
-        String newUrl = url.replace(originalUrl, customDomain);
+
+        //表示文件层级时  folderPath /会在末尾
+        //eg:"Blog/friendlink/"
+        //但是在最后在拼接url时会多出一个/ 需要再处理一次
+        String output = folderPath.replaceAll("/+$", "");
+        String newUrl = url.replace(originalUrl, customDomain+"/"+output);
 
         // 关闭ossClient
         ossClient.shutdown();

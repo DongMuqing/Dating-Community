@@ -31,7 +31,10 @@ server:
 aliyun:
   oss:
     endpoint: https://oss-cn-hangzhou.aliyuncs.com
-    accessKeyId: LTAI5tRWhVd5pCkW75exocdN
-    accessKeySecret: I23xefKz2QJm6gdrzbpijKXfZnhD71
-    bucketName: my-su
+    accessKeyId: #
+    accessKeySecret: #
+    bucketName: #
     customDomain: https://oss.qingmumu.xyz
+sa-token:
+  #一周
+  timeout: 604800
