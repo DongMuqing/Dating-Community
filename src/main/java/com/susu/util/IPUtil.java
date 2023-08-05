@@ -32,7 +32,8 @@ public class IPUtil {
         if (ip != null && ip.indexOf(",") != -1) {
             ip = ip.substring(ip.lastIndexOf(",") + 1, ip.length()).trim();
         }
-        return ip;
+        //ipv6
+        return ip.equals("0:0:0:0:0:0:0:1")?"127.0.0.1":ip;
     }
 
 }

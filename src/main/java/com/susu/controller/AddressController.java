@@ -11,6 +11,7 @@ import com.susu.damian.VisitorInfo;
 import com.susu.dao.VisitorInfoDao;
 import com.susu.service.impl.AmapServiceImpl;
 import com.susu.util.IPUtil;
+import com.susu.util.IpInfo;
 import com.susu.util.TimeUtil;
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Date:2023/7/20 16:33
@@ -53,20 +55,23 @@ public class AddressController {
     @PostMapping("/visitorInfo")
     @SaIgnore
     //访问者信息
-    public Result visitorInfo(HttpServletRequest request) {
-        int flag = 0;
+    public Result visitorInfo(HttpServletRequest request) throws Exception {
+        int flag ;
         UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("user-agent"));
         String clientType = userAgent.getOperatingSystem().getDeviceType().toString();
         String browser = userAgent.getBrowser().toString();
         String os = userAgent.getOperatingSystem().getName();
         String ip = IPUtil.getIpAddr(request);
+        String ipInfo = IpInfo.getInfo(request);
         LocalDateTime accessTime = TimeUtil.getLocalDateTime();
-        VisitorInfo visitorInfo = new VisitorInfo(accessTime, ip, clientType, os, browser);
+
+        VisitorInfo visitorInfo = new VisitorInfo(accessTime, ip, ipInfo,clientType, os, browser);
         flag = visitorInfoDao.insert(visitorInfo);
         Integer code = flag == 1 ? Code.GET_OK : Code.GET_ERR;
-        String msg = flag == 1 ? "插入成功" : "数据插入失败，请重试！";
+        String msg = flag == 1 ? "插入成功" : "插入失败！";
         return new Result(null, code, msg);
     }
+
     @PostMapping("/getVisitorInfo")
     public Result visitorInfo() {
         List<VisitorInfo> visitorInfos = visitorInfoDao.selectList(null);
@@ -74,4 +79,5 @@ public class AddressController {
         String msg = visitorInfos != null ? "查询成功" : "数据查询失败，请重试！";
         return new Result(visitorInfos,code,msg);
     }
+
 }

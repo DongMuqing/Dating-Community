@@ -1,6 +1,5 @@
 package com.susu.service.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.susu.service.AmapService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,12 +18,14 @@ public class AmapServiceImpl implements AmapService {
 
     @Resource
     private RestTemplate restTemplate;
-    private final String key="187dacc112e3d2a9f4e4c35f8f7d108f";
+    @Value("${amap.key}")
+    private String key;
     //显示所有的天气
-    private final String extensions="all";
+    private final String extensions = "all";
+
     @Override
     public String getAddress(String ip) {
-        String url = "https://restapi.amap.com/v3/ip?key="+key+"&ip=" + ip;
+        String url = "https://restapi.amap.com/v3/ip?key=" + key + "&ip=" + ip;
         URI uri = URI.create(url);
         String response = restTemplate.getForObject(uri, String.class);
         return response;
@@ -32,7 +33,7 @@ public class AmapServiceImpl implements AmapService {
 
     @Override
     public String getWeather(String city) {
-        String url = "https://restapi.amap.com/v3/weather/weatherInfo?city="+city+"&key="+key+"&extensions="+extensions;
+        String url = "https://restapi.amap.com/v3/weather/weatherInfo?city=" + city + "&key=" + key + "&extensions=" + extensions;
         URI uri = URI.create(url);
         String response = restTemplate.getForObject(uri, String.class);
         return response;

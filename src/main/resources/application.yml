@@ -35,6 +35,10 @@ aliyun:
     accessKeySecret: #
     bucketName: #
     customDomain: https://oss.qingmumu.xyz
+
 sa-token:
   #一周
   timeout: 604800
+
+amap:
+  key: 187dacc112e3d2a9f4e4c35f8f7d108f
