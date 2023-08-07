@@ -5,6 +5,7 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.susu.damian.Code;
 import com.susu.damian.Result;
 import com.susu.damian.VisitorInfo;
@@ -16,6 +17,7 @@ import com.susu.util.TimeUtil;
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +40,8 @@ public class AddressController {
     private AmapServiceImpl amapService;
     @Autowired
     private VisitorInfoDao visitorInfoDao;
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @GetMapping
     @SaIgnore
@@ -62,9 +66,8 @@ public class AddressController {
         String browser = userAgent.getBrowser().toString();
         String os = userAgent.getOperatingSystem().getName();
         String ip = IPUtil.getIpAddr(request);
-        String ipInfo = IpInfo.getInfo(request);
+        String ipInfo =  IpInfo.getInfo(request, resourceLoader);
         LocalDateTime accessTime = TimeUtil.getLocalDateTime();
-
         VisitorInfo visitorInfo = new VisitorInfo(accessTime, ip, ipInfo,clientType, os, browser);
         flag = visitorInfoDao.insert(visitorInfo);
         Integer code = flag == 1 ? Code.GET_OK : Code.GET_ERR;
@@ -74,7 +77,8 @@ public class AddressController {
 
     @PostMapping("/getVisitorInfo")
     public Result visitorInfo() {
-        List<VisitorInfo> visitorInfos = visitorInfoDao.selectList(null);
+        List<VisitorInfo> visitorInfos = visitorInfoDao.selectList(new QueryWrapper<VisitorInfo>().lambda().
+                orderBy(true,false,VisitorInfo::getAccessTime));
         Integer code = visitorInfos != null? Code.GET_OK : Code.GET_ERR;
         String msg = visitorInfos != null ? "查询成功" : "数据查询失败，请重试！";
         return new Result(visitorInfos,code,msg);
