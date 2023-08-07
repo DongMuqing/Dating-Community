@@ -12,7 +12,6 @@ spring:
       max-file-size: 20MB
       # 设置总上传的文件大小
       max-request-size: 100MB
-      enabled: true
   tomcat:
     remote-ip-header: x-forward-for
     uri-encoding: UTF-8
@@ -27,11 +26,11 @@ server:
 #  mapper-locations: classpath:mapper/*.xml    # mapper映射文件位置
 #  type-aliases-package: com.susu.damain    # 实体类所在的位置
 
+token:
+  privateKey: 'fdasfgdsagaxgsregdfdjyghjfhebfdgwe45ygrfbsdfshfdsag'
+  yangToken: 1000000
+  oldToken: 3000000000
+
 
 aliyun:
   oss:
-    endpoint: https://oss-cn-hangzhou.aliyuncs.com
-    accessKeyId: LTAI5tRWhVd5pCkW75exocdN
-    accessKeySecret: I23xefKz2QJm6gdrzbpijKXfZnhD71
-    bucketName: my-su
-    customDomain: https://oss.qingmumu.xyz
