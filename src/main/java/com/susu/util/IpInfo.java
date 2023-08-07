@@ -20,8 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class IpInfo {
 
     public static String getInfo(HttpServletRequest request,ResourceLoader resourceLoader) throws Exception {
-        Resource resource = resourceLoader.getResource("classpath:data/ip2region.xdb");
-        String dbPath = resource.getFile().getPath();
+        String dbPath = "./data/ip2region.xdb";
         String ip = IPUtil.getIpAddr(request);
         // 1、从 dbPath 加载整个 xdb 到内存。
         byte[] cBuff = Searcher.loadContentFromFile(dbPath);
