@@ -5,7 +5,10 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.susu.damian.Code;
 import com.susu.damian.Result;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @Date:2023/8/3 21:26

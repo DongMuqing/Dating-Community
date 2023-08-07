@@ -3,7 +3,6 @@ package com.susu.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.susu.config.ApiVersion;
 import com.susu.damian.Code;
 import com.susu.damian.Dynamic;
 import com.susu.damian.Result;
@@ -15,10 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @Date:2023/6/13 17:51

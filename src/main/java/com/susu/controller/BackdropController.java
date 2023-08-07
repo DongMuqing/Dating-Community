@@ -2,7 +2,6 @@ package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
-import com.susu.config.ApiVersion;
 import com.susu.damian.Backdrop;
 import com.susu.damian.Code;
 import com.susu.damian.Result;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
