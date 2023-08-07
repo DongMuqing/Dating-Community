@@ -1,16 +1,11 @@
 package com.susu.util;
 
-import lombok.extern.slf4j.Slf4j;
 import org.lionsoul.ip2region.xdb.Searcher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -22,12 +17,17 @@ import java.util.concurrent.TimeUnit;
 
 public class IpInfo {
 
-    public static String getInfo(HttpServletRequest request,ResourceLoader resourceLoader) throws Exception {
-        Resource resource = resourceLoader.getResource("classpath:data/" + "ip2region.xdb");
-        File file = resource.getFile();
+    public static String getInfo(HttpServletRequest request, ResourceLoader resourceLoader) throws Exception {
         String ip = IPUtil.getIpAddr(request);
+        String fileName = "ip2region.xdb";
+        Resource resource = resourceLoader.getResource("classpath:data/" + fileName);
+        InputStream inputStream = resource.getInputStream();
+        byte[] cBuff = inputStream.readAllBytes();
+        inputStream.close();
         // 1、从 dbPath 加载整个 xdb 到内存。
-        byte[] cBuff = Searcher.loadContentFromFile(String.valueOf(file));
+//        String dbPath = new String(Buff);
+        // 1、从 dbPath 加载整个 xdb 到内存。
+//        byte[] cBuff = Searcher.loadContentFromFile(dbPath);
         // 2、使用上述的 cBuff 创建一个完全基于内存的查询对象。
         Searcher searcher = Searcher.newWithBuffer(cBuff);
         // 3、查询
@@ -52,7 +52,7 @@ public class IpInfo {
             }
         }
         //查询时间
-//        long cost = TimeUnit.NANOSECONDS.toMicros((long) (System.nanoTime() - sTime));
+        long cost = TimeUnit.NANOSECONDS.toMicros((long) (System.nanoTime() - sTime));
         return ipInfo;
     }
 }
