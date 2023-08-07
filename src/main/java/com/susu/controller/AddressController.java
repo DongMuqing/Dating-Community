@@ -11,10 +11,12 @@ import com.susu.damian.VisitorInfo;
 import com.susu.dao.VisitorInfoDao;
 import com.susu.service.impl.AmapServiceImpl;
 import com.susu.util.IPUtil;
+import com.susu.util.IpInfo;
 import com.susu.util.TimeUtil;
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,7 +38,8 @@ public class AddressController {
     private AmapServiceImpl amapService;
     @Autowired
     private VisitorInfoDao visitorInfoDao;
-
+    @Autowired
+    private ResourceLoader resourceLoader;
     @GetMapping
     @SaIgnore
     //获取访问者地址信息
@@ -53,18 +56,19 @@ public class AddressController {
     @PostMapping("/visitorInfo")
     @SaIgnore
     //访问者信息
-    public Result visitorInfo(HttpServletRequest request) {
-        int flag = 0;
+    public Result visitorInfo(HttpServletRequest request) throws Exception{
+        int flag ;
         UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("user-agent"));
         String clientType = userAgent.getOperatingSystem().getDeviceType().toString();
         String browser = userAgent.getBrowser().toString();
         String os = userAgent.getOperatingSystem().getName();
         String ip = IPUtil.getIpAddr(request);
+        String ipInfo =  IpInfo.getInfo(request, resourceLoader);
         LocalDateTime accessTime = TimeUtil.getLocalDateTime();
-        VisitorInfo visitorInfo = new VisitorInfo(accessTime, ip, clientType, os, browser);
+        VisitorInfo visitorInfo = new VisitorInfo(accessTime, ip, ipInfo,clientType, os, browser);
         flag = visitorInfoDao.insert(visitorInfo);
         Integer code = flag == 1 ? Code.GET_OK : Code.GET_ERR;
-        String msg = flag == 1 ? "插入成功" : "数据插入失败，请重试！";
+        String msg = flag == 1 ? "插入成功" : "插入失败！";
         return new Result(null, code, msg);
     }
     @PostMapping("/getVisitorInfo")
