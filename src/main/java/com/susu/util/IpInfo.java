@@ -2,6 +2,10 @@ package com.susu.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.lionsoul.ip2region.xdb.Searcher;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -12,11 +16,12 @@ import java.util.concurrent.TimeUnit;
  * @Date:2023/8/5 14:37
  * @Created by Muqing
  */
-@Slf4j
+
 public class IpInfo {
 
-    public static String getInfo(HttpServletRequest request) throws Exception {
-        String dbPath = "data/ip2region.xdb";
+    public static String getInfo(HttpServletRequest request,ResourceLoader resourceLoader) throws Exception {
+        Resource resource = resourceLoader.getResource("classpath:data/ip2region.xdb");
+        String dbPath = resource.getFile().getPath();
         String ip = IPUtil.getIpAddr(request);
         // 1、从 dbPath 加载整个 xdb 到内存。
         byte[] cBuff = Searcher.loadContentFromFile(dbPath);
