@@ -8,6 +8,9 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -20,10 +23,11 @@ import java.util.concurrent.TimeUnit;
 public class IpInfo {
 
     public static String getInfo(HttpServletRequest request,ResourceLoader resourceLoader) throws Exception {
-        String dbPath = "./data/ip2region.xdb";
+        Resource resource = resourceLoader.getResource("classpath:data/" + "ip2region.xdb");
+        File file = resource.getFile();
         String ip = IPUtil.getIpAddr(request);
         // 1、从 dbPath 加载整个 xdb 到内存。
-        byte[] cBuff = Searcher.loadContentFromFile(dbPath);
+        byte[] cBuff = Searcher.loadContentFromFile(String.valueOf(file));
         // 2、使用上述的 cBuff 创建一个完全基于内存的查询对象。
         Searcher searcher = Searcher.newWithBuffer(cBuff);
         // 3、查询
