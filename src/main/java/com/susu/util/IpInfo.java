@@ -19,15 +19,10 @@ public class IpInfo {
 
     public static String getInfo(HttpServletRequest request, ResourceLoader resourceLoader) throws Exception {
         String ip = IPUtil.getIpAddr(request);
-        String fileName = "ip2region.xdb";
-        Resource resource = resourceLoader.getResource("classpath:data/" + fileName);
-        InputStream inputStream = resource.getInputStream();
-        byte[] cBuff = inputStream.readAllBytes();
-        inputStream.close();
+//        String dbPath="/coding/Management-system/data/ip2region.xdb";
+        String dbPath = "./data/ip2region.xdb";
         // 1、从 dbPath 加载整个 xdb 到内存。
-//        String dbPath = new String(Buff);
-        // 1、从 dbPath 加载整个 xdb 到内存。
-//        byte[] cBuff = Searcher.loadContentFromFile(dbPath);
+        byte[] cBuff = Searcher.loadContentFromFile(dbPath);
         // 2、使用上述的 cBuff 创建一个完全基于内存的查询对象。
         Searcher searcher = Searcher.newWithBuffer(cBuff);
         // 3、查询
