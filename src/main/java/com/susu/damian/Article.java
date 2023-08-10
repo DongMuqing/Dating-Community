@@ -1,12 +1,15 @@
 package com.susu.damian;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * @Date:2023/6/9 10:29
@@ -21,13 +24,15 @@ import java.time.LocalDate;
 @ToString
 @TableName("tb_article")
 public class Article {
-
+    @TableId(type = IdType.AUTO)
     private Integer id;
-    @TableField(value="create_time")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDate createTime;
+    private String cover;
+    private String title;
 
+    @TableField(value ="content" )
     private String content;
 
-
+    @TableField(value="create_time")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createTime;
 }

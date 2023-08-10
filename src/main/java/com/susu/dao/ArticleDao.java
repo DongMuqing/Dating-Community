@@ -1,5 +1,6 @@
 package com.susu.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.susu.damian.Article;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Result;
@@ -13,7 +14,7 @@ import java.util.List;
  * @Created by Muqing
  */
 @Mapper
-public interface ArticleDao {
+public interface ArticleDao extends BaseMapper<Article> {
 
     @Select("select * from tb_article ")
     @Results({
