@@ -27,6 +27,9 @@ server:
 #  mapper-locations: classpath:mapper/*.xml    # mapper映射文件位置
 #  type-aliases-package: com.susu.damain    # 实体类所在的位置
 
+mybatis-plus:
+  global-config:
+    banner: false #关闭控制台LOGO
 
 aliyun:
   oss:
@@ -39,6 +42,7 @@ aliyun:
 sa-token:
   #一周
   timeout: 604800
+  is-print: off #关闭控制台banner
 
 amap:
   key: 187dacc112e3d2a9f4e4c35f8f7d108f
