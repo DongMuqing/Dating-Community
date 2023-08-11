@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @Date:2023/6/13 17:33
@@ -38,4 +39,7 @@ public class Dynamic {
 
     @TableField(value="img_srclist")
     private  String imgSrclist;
+
+    @TableField(exist = false) //  不映射到数据库
+    private List<Comment> comments;
 }

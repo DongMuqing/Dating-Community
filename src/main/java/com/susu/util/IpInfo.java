@@ -50,4 +50,32 @@ public class IpInfo {
         long cost = TimeUnit.NANOSECONDS.toMicros((long) (System.nanoTime() - sTime));
         return ipInfo;
     }
+
+    public static String getAddress(HttpServletRequest request, ResourceLoader resourceLoader) throws Exception {
+        String ip = IPUtil.getIpAddr(request);
+//        String dbPath="/coding/Management-system/data/ip2region.xdb";
+        String dbPath = "./data/ip2region.xdb";
+        byte[] cBuff = Searcher.loadContentFromFile(dbPath);
+        Searcher searcher = Searcher.newWithBuffer(cBuff);
+        //region: 0|0|0|内网IP|内网IP, ioCount: 0, took: 62 μs
+        //        国家|区域|省份|城市|ISP
+        String region = searcher.search(ip);
+        String[] regions = region.split("\\|");
+        Map<Integer, String> regionMap = new HashMap<>();
+        String ipInfo = "";
+        if (regions.length == 5) {
+            for (int i = 0; i < regions.length; i++) {
+                regionMap.put(i, regions[i]);
+            }
+            //国内地址则显示具体省份和运营商
+            if (regionMap.get(0).equals("中国")) {
+                ipInfo = regionMap.get(2);
+            } else if (regionMap.get(3).equals("内网IP")) {
+                ipInfo = "内网";
+            } else {
+                ipInfo = regionMap.get(0);
+            }
+        }
+        return ipInfo;
+    }
 }
