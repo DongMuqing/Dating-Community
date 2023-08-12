@@ -9,14 +9,19 @@ import com.susu.damian.Dynamic;
 import com.susu.damian.Result;
 import com.susu.dao.CommentDao;
 import com.susu.dao.DynamicDao;
+import com.susu.util.TimeComparisonUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.susu.util.TimeComparisonUtil.compareTime;
 
 /**
  * @Date:2023/6/13 17:51
@@ -71,9 +76,11 @@ public class DynamicController {
         //数据量： 如果数据量很大，直接通过连接表查询可能更高效，因为减少了多次查询和数据传输的开销。
         //复杂性： 如果你需要进行复杂的数据整合和处理，通过Java整合可能更加灵活和易于管理。
         // 将 dynamics 转化为 Map，以便通过 ID 进行快速查找
+        //为什么i不能为0？ 为0时第一条动态评论为空？
+        int i=1;
         for (Dynamic dynamic : dynamics) {
             dynamic.setComments(new ArrayList<>()); // 初始化评论列表
-            DynamicAndCommentMap.put(dynamic.getId(), dynamic);
+            DynamicAndCommentMap.put(i++, dynamic);
         }
         // 将 comments 关联到 dynamics
         for (Comment comment : comments) {

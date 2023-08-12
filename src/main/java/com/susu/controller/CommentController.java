@@ -3,10 +3,10 @@ package com.susu.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
-import com.susu.damian.Code;
-import com.susu.damian.Comment;
-import com.susu.damian.Result;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.susu.damian.*;
 import com.susu.dao.CommentDao;
+import com.susu.dao.DynamicDao;
 import com.susu.util.IpInfo;
 import com.susu.util.UUIDUsernameUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +31,8 @@ import java.util.regex.Pattern;
 public class CommentController {
     @Autowired
     private CommentDao commentDao;
+    @Autowired
+    private DynamicDao dynamicDao;
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -65,10 +67,15 @@ public class CommentController {
         }
         String addressInfo = IpInfo.getAddress(request, resourceLoader);
         log.info(comment.getContent() + comment.getUsername() + comment.getCreateTime());
+        //插入评论对象
         Comment comments = new Comment(comment.getPostId(), username, comment.getContent(), comment.getCreateTime(), addressInfo);
         int flag = commentDao.insert(comments);
+        //获取对应动态的评论并返回 用于更新界面评论数据
+        QueryWrapper<Comment> wrapper=new QueryWrapper<>();
+        wrapper.lambda().eq(Comment::getPostId,comments.getPostId()).orderBy(true, false, Comment::getCreateTime);
+        List<Comment> comments1 = commentDao.selectList(wrapper);
         Integer code = flag != 0 ? Code.GET_OK : Code.GET_ERR;
         String msg = flag != 0 ? "发送成功" : "发送失败，请重试！";
-        return new Result(null, code, msg);
+        return new Result(comments1, code, msg);
     }
 }
