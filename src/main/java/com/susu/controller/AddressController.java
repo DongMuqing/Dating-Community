@@ -41,18 +41,6 @@ public class AddressController {
     @Autowired
     private ResourceLoader resourceLoader;
 
-    @GetMapping
-    @SaIgnore
-    //获取访问者地址信息
-    public Result getAddress(HttpServletRequest request) {
-        String ip = IPUtil.getIpAddr(request);
-        String address = amapService.getAddress(ip);
-        HashMap<String, String> addressMap = JSON.parseObject(address, HashMap.class);
-        Integer code = addressMap != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = addressMap != null ? "查询成功" : "数据查询失败，请重试！";
-        return new Result(addressMap, code, msg);
-    }
-
 
     @PostMapping("/visitorInfo")
     @SaIgnore
@@ -60,12 +48,14 @@ public class AddressController {
     public Result visitorInfo(HttpServletRequest request) throws Exception {
         int flag ;
         UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("user-agent"));
+
         String clientType = userAgent.getOperatingSystem().getDeviceType().toString();
         String browser = userAgent.getBrowser().toString();
         String os = userAgent.getOperatingSystem().getName();
         String ip = IPUtil.getIpAddr(request);
         String ipInfo =  IpInfo.getInfo(request, resourceLoader);
         LocalDateTime accessTime = TimeUtil.getLocalDateTime();
+
         VisitorInfo visitorInfo = new VisitorInfo(accessTime, ip, ipInfo,clientType, os, browser);
         flag = visitorInfoDao.insert(visitorInfo);
         Integer code = flag == 1 ? Code.GET_OK : Code.GET_ERR;
