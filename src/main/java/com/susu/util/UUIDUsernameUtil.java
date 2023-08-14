@@ -10,6 +10,6 @@ public class UUIDUsernameUtil {
     public static String generateRandomUsername() {
         UUID uuid = UUID.randomUUID();
         String rawUsername = uuid.toString().replace("-", ""); // 去除横杠
-        return rawUsername.substring(0, 10); // 取前10个字符作为用户名
+        return rawUsername.substring(0, 8); // 取前10个字符作为用户名
     }
 }

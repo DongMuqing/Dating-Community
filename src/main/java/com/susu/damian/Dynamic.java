@@ -25,6 +25,7 @@ import java.util.List;
 public class Dynamic {
     @TableId(type = IdType.AUTO)
     private Integer id;
+    private String avatar;
     @TableField(value="create_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;

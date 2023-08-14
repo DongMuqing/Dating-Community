@@ -3,6 +3,7 @@ package com.susu.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.susu.damian.Code;
 import com.susu.damian.Comment;
 import com.susu.damian.Dynamic;
@@ -77,21 +78,34 @@ public class DynamicController {
         //复杂性： 如果你需要进行复杂的数据整合和处理，通过Java整合可能更加灵活和易于管理。
         // 将 dynamics 转化为 Map，以便通过 ID 进行快速查找
         //为什么i不能为0？ 为0时第一条动态评论为空？
-        int i=1;
+        int i=0;
         for (Dynamic dynamic : dynamics) {
             dynamic.setComments(new ArrayList<>()); // 初始化评论列表
-            DynamicAndCommentMap.put(i++, dynamic);
-        }
-        // 将 comments 关联到 dynamics
-        for (Comment comment : comments) {
-            Dynamic dynamic = DynamicAndCommentMap.get(comment.getPostId());
-            if (dynamic != null) {
-                dynamic.getComments().add(comment);
+            for (Comment comment : comments) {
+                if (dynamic.getId().equals(comment.getPostId())) {
+                    dynamic.getComments().add(comment);
+                }
             }
         }
+        // 将 comments 关联到 dynamics
         Integer code = dynamics != null ? Code.GET_OK : Code.GET_ERR;
         String msg = dynamics != null ? "查询成功" : "数据查询失败，请重试！";
-        return new Result(DynamicAndCommentMap, code, msg);
+        return new Result(dynamics, code, msg);
     }
 
+    @PostMapping("/upvote")
+    //忽略认证
+    @SaIgnore
+    /**
+     * 只需要接受一个动态id和点赞数来进行更新数据
+     */
+    public Result upvote(@RequestBody Dynamic dynamic){
+        UpdateWrapper<Dynamic> updateWrapper =new UpdateWrapper<>();
+        updateWrapper.lambda().eq(Dynamic::getId,dynamic.getId()).
+                               set(Dynamic::getUpvoteNum,dynamic.getUpvoteNum());
+        int update = dynamicDao.update(null, updateWrapper);
+        Integer code = update != 0 ? Code.GET_OK : Code.GET_ERR;
+        String msg = update != 0 ? "点赞成功" : "点赞失败，QAQ！";
+        return new Result(null,code,msg);
+    }
 }

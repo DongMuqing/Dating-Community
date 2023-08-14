@@ -28,6 +28,7 @@ public class Comment {
     @TableField(value = "post_id")
     private Integer postId;
 
+    private String avatar;
     private String username;
     private  String content;
 
@@ -36,9 +37,12 @@ public class Comment {
     private LocalDateTime createTime;
 
     private String address;
-
-    public Comment(Integer postId, String username, String content, LocalDateTime createTime, String address) {
+    //条数
+    @TableField(exist = false)
+    private  Integer num;
+    public Comment(Integer postId, String avatar,String username, String content, LocalDateTime createTime, String address) {
         this.postId = postId;
+        this.avatar=avatar;
         this.username = username;
         this.content = content;
         this.createTime = createTime;

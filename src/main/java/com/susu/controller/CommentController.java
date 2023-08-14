@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.susu.damian.*;
 import com.susu.dao.CommentDao;
 import com.susu.dao.DynamicDao;
+import com.susu.util.AliOSSUtils;
 import com.susu.util.IpInfo;
 import com.susu.util.UUIDUsernameUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +36,8 @@ public class CommentController {
     private DynamicDao dynamicDao;
     @Autowired
     private ResourceLoader resourceLoader;
+    @Autowired
+    private AliOSSUtils aliOSSUtils;
 
     @GetMapping
     @SaIgnore
@@ -66,9 +69,12 @@ public class CommentController {
             username = "游客" + UUIDUsernameUtil.generateRandomUsername();
         }
         String addressInfo = IpInfo.getAddress(request, resourceLoader);
-        log.info(comment.getContent() + comment.getUsername() + comment.getCreateTime());
+        //随机一个头像
+        List<String> userpics = aliOSSUtils.ListRequest("Userpics");
+        int index = (int) (Math.random()* userpics.size());
+        String avatar=userpics.get(index);
         //插入评论对象
-        Comment comments = new Comment(comment.getPostId(), username, comment.getContent(), comment.getCreateTime(), addressInfo);
+        Comment comments = new Comment(comment.getPostId(),avatar, username, comment.getContent(), comment.getCreateTime(), addressInfo);
         int flag = commentDao.insert(comments);
         //获取对应动态的评论并返回 用于更新界面评论数据
         QueryWrapper<Comment> wrapper=new QueryWrapper<>();
