@@ -21,8 +21,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@TableName("tb_dynamic")
-public class Dynamic {
+@TableName("tb_post")
+public class Post {
     @TableId(type = IdType.AUTO)
     private Integer id;
     private String avatar;

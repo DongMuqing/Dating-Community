@@ -9,6 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Transactional
 @Service
-public interface DynamicService {
+public interface PostService {
 
 }

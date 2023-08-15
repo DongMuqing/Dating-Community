@@ -1,6 +1,7 @@
 package com.susu.service.impl;
 
-import com.susu.dao.DynamicDao;
+import com.susu.dao.PostDao;
+import com.susu.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,8 +10,8 @@ import org.springframework.stereotype.Service;
  * @Created by Muqing
  */
 @Service
-public class DynamicServiceImpl {
+public class PostServiceImpl implements PostService {
     @Autowired
-    private DynamicDao  dynamicDao;
+    private PostDao postDao;
 
 }
