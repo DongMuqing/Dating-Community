@@ -19,6 +19,7 @@ import lombok.*;
 public class User {
     @TableId(type = IdType.AUTO)
     private  Integer id;
+    private String avatar;
     private String username;
     private String password;
 }

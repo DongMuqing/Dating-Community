@@ -24,7 +24,7 @@ import java.util.Map;
  * @Created by Muqing
  */
 @RestController
-@RequestMapping("api/{version}/dynamic")
+@RequestMapping("api/{version}/post")
 @CrossOrigin
 @Slf4j
 @SaCheckLogin
@@ -36,8 +36,6 @@ public class PostController {
     private CommentDao commentDao;
 
     @GetMapping
-    //忽略认证
-    @SaIgnore
     public Result getAll() {
         //时间降序查询
         List<Post> posts = postDao.selectList(new QueryWrapper<Post>().lambda().orderBy(true, false, Post::getCreateTime));
@@ -102,5 +100,19 @@ public class PostController {
         Integer code = update != 0 ? Code.GET_OK : Code.GET_ERR;
         String msg = update != 0 ? "点赞成功" : "点赞失败，QAQ！";
         return new Result(null,code,msg);
+    }
+
+    @DeleteMapping("/delete")
+    public Result deleteById(@RequestBody Integer id){
+        //存在外键 先删除对应评论
+        QueryWrapper<Comment> query = new QueryWrapper<>();
+        query.lambda().eq(Comment::getPostId, id);
+        commentDao.delete(query);
+        Integer flag = postDao.deleteById(id);
+        //返回数据更新页面数据
+        List<Post> posts = postDao.selectList(null);
+        Integer code = flag != 0 ? Code.DELETE_OK : Code.DELETE_ERR;
+        String msg = flag != 0 ? "删除成功" : "删除失败，QAQ！";
+        return new Result(posts,code,msg);
     }
 }
