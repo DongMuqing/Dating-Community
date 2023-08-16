@@ -1,6 +1,8 @@
 package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaIgnore;
+import com.susu.damian.AliOss;
 import com.susu.damian.Code;
 import com.susu.damian.Result;
 import com.susu.util.AliOSSUtils;
@@ -11,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.websocket.server.PathParam;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -46,17 +49,25 @@ public class AliOssController {
      * @throws Exception
      */
     @PostMapping("/filepath")
+    @SaIgnore
     public Result getFilePath( @RequestParam String path) throws Exception {
-        List<String> filepath = aliOSSUtils.ListRequest(path);
+        path.substring(path.length()-1);
+        List<AliOss> filepath = aliOSSUtils.ListRequest(path);
+        log.info(filepath.toString());
         Integer code = filepath != null ? Code.GET_OK : Code.GET_ERR;
         String msg = filepath != null ? "查询成功" : "数据查询失败，请重试！";
         return new Result(filepath, code, msg);
     }
-    @PostMapping
-    public Result upload(@RequestPart MultipartFile image,String folderPath) throws Exception {
-        String url = aliOSSUtils.upload(image, folderPath);
-        Integer code = url != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = url != null ? "上传成功" : "上传失败，请重试！";
-        return new Result(url, code, msg);
+    @PostMapping("/upload")
+    public Result upload(@RequestPart("files") MultipartFile[] files,String path) throws Exception {
+        System.out.println(files.toString());
+        List<String> fileurl=new ArrayList<>();
+        for (MultipartFile file : files) {
+            String url = aliOSSUtils.upload(file, path);
+            fileurl.add(url);
+        }
+        Integer code = fileurl!= null ? Code.GET_OK : Code.GET_ERR;
+        String msg = fileurl != null ? "上传成功" : "上传失败，请重试！";
+        return new Result(fileurl, code, msg);
     }
 }

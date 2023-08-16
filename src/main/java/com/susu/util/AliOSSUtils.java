@@ -3,6 +3,8 @@ package com.susu.util;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.*;
+import com.susu.damian.AliOss;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +13,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -72,28 +77,33 @@ public class AliOSSUtils {
      * @return 所有文件的url地址
      * @throws Exception
      */
-    public List<String> ListRequest(String path) throws Exception {
+    public List<AliOss> ListRequest(String path) throws Exception {
         // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
         // 构造ListObjectsV2Request请求。
         ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request(bucketName);
 
         // 设置prefix参数来获取fun目录下的所有文件与文件夹。需要在末尾加上/
-        listObjectsV2Request.setPrefix(path + "/");
+        listObjectsV2Request.setPrefix(path);
 
         // 设置正斜线（/）为文件夹的分隔符。
         listObjectsV2Request.setDelimiter("/");
         // 发起列举请求。
         ListObjectsV2Result result = ossClient.listObjectsV2(listObjectsV2Request);
-        List<String> fileList = new ArrayList<>();
+        List<AliOss> fileList = new ArrayList<>();
+        int i=0;
         // objectSummaries的列表中给出的是目录下的文件。
         for (OSSObjectSummary objectSummary : result.getObjectSummaries()) {
-            fileList.add(customDomain + "/" + objectSummary.getKey());
+            SimplifiedObjectMeta objectMeta = ossClient.getSimplifiedObjectMeta(bucketName, objectSummary.getKey());
+            Date lastModified = objectMeta.getLastModified();
+            String localDateTime = TimeUtil.formatTime(lastModified);
+            fileList.add(new AliOss(i,customDomain + "/" + objectSummary.getKey(),localDateTime));
+            i++;
         }
         // 关闭ossClient
         ossClient.shutdown();
         //去除第一个文件目录路径 [https://*/Userpics/,
-        fileList.remove(0);
+
         return fileList;
     }
 
