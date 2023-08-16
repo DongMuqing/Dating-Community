@@ -21,11 +21,11 @@ import java.time.LocalDateTime;
 @ToString
 @TableName("tb_comment")
 public class Comment {
-    @TableField(value = "comment_id")
-    @TableId(type = IdType.AUTO)
+//    @TableField(value = "comment_id")
+    @TableId(value = "comment_id",type = IdType.AUTO)
     private Integer commentId;
 
-    @TableField(value = "post_id")
+
     private Integer postId;
 
     private String avatar;

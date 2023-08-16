@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.susu.damian.AliOss;
 import com.susu.damian.Code;
 import com.susu.damian.Comment;
 import com.susu.damian.Result;
@@ -72,9 +73,9 @@ public class CommentController {
             //未登录游客
             username = "游客" + UUIDUsernameUtil.generateRandomUsername();
             //随机一个头像
-            List<String> userpics = aliOSSUtils.ListRequest("Userpics");
+            List<AliOss> userpics = aliOSSUtils.ListRequest("Userpics");
             int index = (int) (Math.random() * userpics.size());
-            avatar = userpics.get(index);
+            avatar = userpics.get(index).getPath();
         }
         String addressInfo = IpInfo.getAddress(request, resourceLoader);
         //插入评论对象
