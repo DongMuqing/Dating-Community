@@ -42,11 +42,7 @@ public class ArticleV1Controller {
     }
     @PostMapping("add")
     public Result addArticle(@RequestBody Article articles){
-        Article article = new Article();
-        article.setContent(articles.getContent());
-        LocalDateTime createTime = TimeUtil.getLocalDateTime();
-        article.setCreateTime(createTime);
-        int flag = articleDao.insert(article);
+        int flag = articleDao.insert(articles);
         Integer code = flag != 0 ? Code.GET_OK : Code.GET_ERR;
         String msg = flag != 0 ? "添加成功" : "数据添加失败，请重试！";
         return new Result(null,code,msg);

@@ -4,10 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.susu.damian.AliOss;
-import com.susu.damian.Code;
-import com.susu.damian.Comment;
-import com.susu.damian.Result;
+import com.susu.damian.*;
 import com.susu.dao.CommentDao;
 import com.susu.dao.PostDao;
 import com.susu.util.AliOSSUtils;
@@ -43,7 +40,7 @@ public class CommentController {
 
     @GetMapping
     public Result getAll() {
-        List<Comment> comments = commentDao.selectList(null);
+        List<Comment> comments = commentDao.selectList(new QueryWrapper<Comment>().lambda().orderBy(true, false, Comment::getCreateTime));
         Integer code = comments != null ? Code.GET_OK : Code.GET_ERR;
         String msg = comments != null ? "查询成功" : "数据查询失败，请重试！";
         return new Result(comments, code, msg);

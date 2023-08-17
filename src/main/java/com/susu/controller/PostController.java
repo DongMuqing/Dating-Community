@@ -10,10 +10,13 @@ import com.susu.damian.Post;
 import com.susu.damian.Result;
 import com.susu.dao.CommentDao;
 import com.susu.dao.PostDao;
+import com.susu.util.IpInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +38,8 @@ public class PostController {
     @Autowired
     private CommentDao commentDao;
 
+    @Autowired
+    private ResourceLoader resourceLoader;
     @GetMapping
     public Result getAll() {
         //时间降序查询
@@ -50,7 +55,10 @@ public class PostController {
      * @return
      */
     @PostMapping
-    public Result publish(@RequestBody Post post) {
+    public Result publish(@RequestBody Post post, HttpServletRequest request) throws Exception {
+        //添加发布地址
+        String addressInfo = IpInfo.getAddress(request, resourceLoader);
+        post.setLocation(addressInfo);
         int flag = postDao.insert(post);
         Integer code = flag != 0 ? Code.SAVE_OK : Code.SAVE_ERR;
         String msg = flag != 0 ? "提交成功！" : "数据提交失败，请重试！";

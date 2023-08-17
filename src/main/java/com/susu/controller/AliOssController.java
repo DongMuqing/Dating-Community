@@ -49,7 +49,6 @@ public class AliOssController {
      * @throws Exception
      */
     @PostMapping("/filepath")
-    @SaIgnore
     public Result getFilePath( @RequestParam String path) throws Exception {
         path.substring(path.length()-1);
         List<AliOss> filepath = aliOSSUtils.ListRequest(path);
@@ -60,7 +59,6 @@ public class AliOssController {
     }
     @PostMapping("/upload")
     public Result upload(@RequestPart("files") MultipartFile[] files,String path) throws Exception {
-        System.out.println(files.toString());
         List<String> fileurl=new ArrayList<>();
         for (MultipartFile file : files) {
             String url = aliOSSUtils.upload(file, path);
