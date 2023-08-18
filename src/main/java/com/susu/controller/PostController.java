@@ -123,4 +123,14 @@ public class PostController {
         String msg = flag != 0 ? "删除成功" : "删除失败，QAQ！";
         return new Result(posts,code,msg);
     }
+
+    @PostMapping("/edit")
+    public Result edits(@RequestBody Post post){
+        int flag= postDao.updateById(post);
+        Integer code = flag != 0 ? Code.UPDATE_OK : Code.UPDATE_ERR;
+        String msg = flag != 0 ? "修改成功" : "修改失败，QAQ！";
+        List<Post> posts = postDao.selectList(null);
+        return new Result(posts,code,msg);
+    }
+
 }
