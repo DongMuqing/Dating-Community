@@ -32,6 +32,7 @@ public class MenuController {
 
     @Autowired
     private AfterMenuDao afterMenuDao;
+
     @GetMapping
     @SaIgnore
     public Result getMenu() {

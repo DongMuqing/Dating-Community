@@ -4,7 +4,10 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.susu.damian.*;
+import com.susu.damian.AliOss;
+import com.susu.damian.Code;
+import com.susu.damian.Comment;
+import com.susu.damian.Result;
 import com.susu.dao.CommentDao;
 import com.susu.dao.PostDao;
 import com.susu.util.AliOSSUtils;
@@ -48,6 +51,7 @@ public class CommentController {
 
     /**
      * 评论的添加
+     *
      * @param comment
      * @param request
      * @return
@@ -88,13 +92,13 @@ public class CommentController {
     }
 
     @DeleteMapping
-    public Result delete(@RequestBody Integer id){
+    public Result delete(@RequestBody Integer id) {
         QueryWrapper<Comment> query = new QueryWrapper<>();
         query.lambda().eq(Comment::getCommentId, id);
         int delete = commentDao.delete(query);
         List<Comment> comments = commentDao.selectList(null);
-        Integer code = delete != 0? Code.DELETE_OK: Code.DELETE_ERR;
+        Integer code = delete != 0 ? Code.DELETE_OK : Code.DELETE_ERR;
         String msg = delete != 0 ? "删除成功" : "删除失败，请重试！";
-        return new Result(comments,code,msg);
+        return new Result(comments, code, msg);
     }
 }

@@ -8,7 +8,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -29,10 +28,10 @@ public class Article {
     private String cover;
     private String title;
 
-    @TableField(value ="content" )
+    @TableField(value = "content")
     private String content;
 
-    @TableField(value="create_time")
+    @TableField(value = "create_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
 }

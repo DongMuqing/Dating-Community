@@ -3,7 +3,6 @@ package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
-import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.susu.damian.Code;
 import com.susu.damian.Result;
@@ -17,11 +16,13 @@ import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -46,17 +47,17 @@ public class AddressController {
     @SaIgnore
     //访问者信息
     public Result visitorInfo(HttpServletRequest request) throws Exception {
-        int flag ;
+        int flag;
         UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("user-agent"));
 
         String clientType = userAgent.getOperatingSystem().getDeviceType().toString();
         String browser = userAgent.getBrowser().toString();
         String os = userAgent.getOperatingSystem().getName();
         String ip = IPUtil.getIpAddr(request);
-        String ipInfo =  IpInfo.getInfo(request, resourceLoader);
+        String ipInfo = IpInfo.getInfo(request, resourceLoader);
         LocalDateTime accessTime = TimeUtil.getLocalDateTime();
 
-        VisitorInfo visitorInfo = new VisitorInfo(accessTime, ip, ipInfo,clientType, os, browser);
+        VisitorInfo visitorInfo = new VisitorInfo(accessTime, ip, ipInfo, clientType, os, browser);
         flag = visitorInfoDao.insert(visitorInfo);
         Integer code = flag == 1 ? Code.GET_OK : Code.GET_ERR;
         String msg = flag == 1 ? "插入成功" : "插入失败！";
@@ -66,10 +67,10 @@ public class AddressController {
     @PostMapping("/getVisitorInfo")
     public Result visitorInfo() {
         List<VisitorInfo> visitorInfos = visitorInfoDao.selectList(new QueryWrapper<VisitorInfo>().lambda().
-                orderBy(true,false,VisitorInfo::getAccessTime));
-        Integer code = visitorInfos != null? Code.GET_OK : Code.GET_ERR;
+                orderBy(true, false, VisitorInfo::getAccessTime));
+        Integer code = visitorInfos != null ? Code.GET_OK : Code.GET_ERR;
         String msg = visitorInfos != null ? "查询成功" : "数据查询失败，请重试！";
-        return new Result(visitorInfos,code,msg);
+        return new Result(visitorInfos, code, msg);
     }
 
 }
