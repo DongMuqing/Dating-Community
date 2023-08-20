@@ -18,7 +18,31 @@ spring:
     uri-encoding: UTF-8
     max-threads: 1000
     max-http-header-size: 8096
-
+  redis:
+    #数据库索引
+    database: 0
+    host: 127.0.0.1
+    port: 6379
+    password:
+    # 链接超时时间
+    connect-timeout: 10s
+    lettuce:
+      pool:
+        max-active: 8 #最大连接
+        max-idle: 8 #最大空闲连接
+        min-idle: 0 #最小空闲连接
+        max-wait: 100ms #连接等待时间
+  mail:
+    username: #
+    password: #
+    host: smtp.qq.com
+    default-encoding: utf-8
+    #开启加密验证
+    properties:
+      mail:
+        smtp:
+          ssl:
+            enable: ture
 server:
   tomcat:
     max-swallow-size: -1 #重要的一行，修改tomcat的吞吐量
@@ -33,11 +57,11 @@ mybatis-plus:
 
 aliyun:
   oss:
-    endpoint: https://oss-cn-hangzhou.aliyuncs.com
+    endpoint: #
     accessKeyId: #
     accessKeySecret: #
     bucketName: #
-    customDomain: https://oss.qingmumu.xyz
+    customDomain: #
 
 sa-token:
   #一周
