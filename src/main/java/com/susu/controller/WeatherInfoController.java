@@ -33,12 +33,37 @@ public class WeatherInfoController {
     @Autowired
     private ResourceLoader resourceLoader;
 
+    /**
+     * 返回预报天气
+     * @param request
+     * @return
+     * @throws Exception
+     */
     @PostMapping
     @SaIgnore
     public Result getWeather(HttpServletRequest request) throws Exception {
         String city = IpInfo.getAddress(request, resourceLoader);
         //传入获取天气的方法中进行获取天气信息
         String data = amapService.getWeather(city);
+        HashMap<String, String> weatherMap = JSON.parseObject(data, HashMap.class);
+        weatherMap.put("city",city);
+        Integer code = weatherMap != null ? Code.GET_OK : Code.GET_ERR;
+        String msg = weatherMap != null ? "查询成功" : "数据查询失败，请重试！";
+        return new Result(weatherMap, code, msg);
+    }
+
+    /**
+     * 返回实况天气
+     * @param request
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/base")
+    @SaIgnore
+    public Result getActualWeather(HttpServletRequest request) throws Exception {
+        String city = IpInfo.getAddress(request, resourceLoader);
+        //传入获取天气的方法中进行获取天气信息
+        String data = amapService.actualWeather(city);
         HashMap<String, String> weatherMap = JSON.parseObject(data, HashMap.class);
         weatherMap.put("city",city);
         Integer code = weatherMap != null ? Code.GET_OK : Code.GET_ERR;

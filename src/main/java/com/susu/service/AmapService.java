@@ -12,4 +12,5 @@ import org.springframework.transaction.annotation.Transactional;
 public interface AmapService {
    String getAddress(String ip);
    String getWeather(String province);
+   String actualWeather(String province);
  }
