@@ -50,7 +50,6 @@ public class AliOssController {
     public Result getFilePath(@RequestParam String path) throws Exception {
         path.substring(path.length() - 1);
         List<AliOss> filepath = aliOSSUtils.ListRequest(path);
-        log.info(filepath.toString());
         Integer code = filepath != null ? Code.GET_OK : Code.GET_ERR;
         String msg = filepath != null ? "查询成功" : "数据查询失败，请重试！";
         return new Result(filepath, code, msg);

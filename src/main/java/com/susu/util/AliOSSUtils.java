@@ -1,10 +1,10 @@
 package com.susu.util;
 
+import com.aliyun.oss.ClientBuilderConfiguration;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.*;
 import com.susu.damian.AliOss;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,9 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
 import java.util.*;
 
 /**
@@ -47,6 +44,10 @@ public class AliOSSUtils {
      * @throws IOException
      */
     public String upload(MultipartFile file, String folderPath) throws IOException {
+        // 创建ClientConfiguration实例，您可以根据实际情况修改默认参数。
+        ClientBuilderConfiguration conf = new ClientBuilderConfiguration();
+// 开启CNAME，CNAME用于将自定义域名绑定到目标Bucket。
+        conf.setSupportCname(true);
         //获取阿里云OSS参数
         // 获取上传的文件的输入流
         InputStream inputStream = file.getInputStream();
@@ -55,7 +56,7 @@ public class AliOSSUtils {
         //去掉uuid中间的-
         String fileName = UUID.randomUUID().toString().replace("-", "") + originalFilename.substring(originalFilename.lastIndexOf("."));
         //上传文件到 OSS
-        OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+        OSS ossClient = new OSSClientBuilder().build(customDomain, accessKeyId, accessKeySecret, conf);
         ossClient.putObject(bucketName, folderPath + fileName, inputStream);
         //文件访问路径(替换自定义域名)
         String url = endpoint.split("//")[0] + "//" + bucketName + "." + endpoint.split("//")[1] + "/" + fileName;
@@ -91,13 +92,13 @@ public class AliOSSUtils {
         // 发起列举请求。
         ListObjectsV2Result result = ossClient.listObjectsV2(listObjectsV2Request);
         List<AliOss> fileList = new ArrayList<>();
-        int i=0;
+        int i = 0;
         // objectSummaries的列表中给出的是目录下的文件。
         for (OSSObjectSummary objectSummary : result.getObjectSummaries()) {
             SimplifiedObjectMeta objectMeta = ossClient.getSimplifiedObjectMeta(bucketName, objectSummary.getKey());
             Date lastModified = objectMeta.getLastModified();
             String localDateTime = TimeUtil.formatTime(lastModified);
-            fileList.add(new AliOss(i,customDomain + "/" + objectSummary.getKey(),localDateTime));
+            fileList.add(new AliOss(i, customDomain + "/" + objectSummary.getKey(), localDateTime));
             i++;
         }
         // 关闭ossClient
@@ -115,17 +116,17 @@ public class AliOSSUtils {
         // 列举文件。
         ObjectListing listing = ossClient.listObjects(listObjectsRequest);
         // 遍历所有文件。
-        List<String> directory=new ArrayList<>();
+        List<String> directory = new ArrayList<>();
         List<String> filePaths = new ArrayList<>();
-        Map<Integer,List<String>> ossMap = new HashMap<>();
+        Map<Integer, List<String>> ossMap = new HashMap<>();
         for (OSSObjectSummary objectSummary : listing.getObjectSummaries()) {
             String key = objectSummary.getKey();
             //如果最后的字符为/则表示是一个路径
             //与传统文件系统中的层级结构不同，OSS内部使用扁平结构存储数据，即所有数据均以对象（Object）的形式保存在存储空间（Bucket）中。
             // 为方便管理，OSS管理控制台将所有文件名以正斜线（/）结尾的文件显示为文件夹，实现类似于Windows文件夹的基本功能
-            if (key.substring(key.length()-1).equals("/")){
-                    directory.add(key);
-            }else{
+            if (key.substring(key.length() - 1).equals("/")) {
+                directory.add(key);
+            } else {
                 //不是文件目录
                 filePaths.add(customDomain + "/" + key);
             }
