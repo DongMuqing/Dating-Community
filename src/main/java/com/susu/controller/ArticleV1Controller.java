@@ -2,8 +2,10 @@ package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.susu.damian.Article;
 import com.susu.damian.Code;
+import com.susu.damian.Post;
 import com.susu.damian.Result;
 import com.susu.dao.ArticleDao;
 import com.susu.service.ArticleService;
@@ -31,7 +33,7 @@ public class ArticleV1Controller {
     @GetMapping
     @SaIgnore
     public Result getAll() {
-        List<Article> articles = articleDao.selectList(null);
+        List<Article> articles = articleDao.selectList(new QueryWrapper<Article>().lambda().orderBy(true, false, Article::getCreateTime));
         Integer code = articles != null ? Code.GET_OK : Code.GET_ERR;
         String msg = articles != null ? "查询成功" : "数据查询失败，请重试！";
         return new Result(articles, code, msg);
