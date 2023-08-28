@@ -1,6 +1,7 @@
 package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import com.aliyun.oss.model.VoidResult;
 import com.susu.damian.AliOss;
 import com.susu.damian.Code;
 import com.susu.damian.Result;
@@ -65,5 +66,10 @@ public class AliOssController {
         Integer code = fileurl != null ? Code.GET_OK : Code.GET_ERR;
         String msg = fileurl != null ? "上传成功" : "上传失败，请重试！";
         return new Result(fileurl, code, msg);
+    }
+    @PostMapping("/delete")
+    public Result delete( String path) throws Exception {
+        VoidResult delete = aliOSSUtils.delete(path);
+        return new Result(delete, Code.DELETE_OK,"删除成功");
     }
 }

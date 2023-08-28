@@ -108,7 +108,7 @@ public class AliOSSUtils {
         return fileList;
     }
 
-    public Map<Integer,List<String>> getDirectoryAndFilePath() {
+    public Map<Integer, List<String>> getDirectoryAndFilePath() {
         // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
         // 构造ListObjectsRequest请求。
@@ -136,5 +136,21 @@ public class AliOSSUtils {
         ossMap.put(0, directory);
         ossMap.put(1, filePaths);
         return ossMap;
+    }
+
+    /**
+     * 删除指定的单个文件
+     *
+     * @param objectName 文件在oss中的路径
+     * @return
+     */
+    public VoidResult delete(String objectName) throws Exception{
+        // 创建OSSClient实例。
+        OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+        // 删除文件或目录。如果要删除目录，目录必须为空。
+        VoidResult voidResult = ossClient.deleteObject(bucketName, objectName);
+        // 关闭ossClient
+        ossClient.shutdown();
+        return voidResult;
     }
 }
