@@ -5,6 +5,7 @@ import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.*;
 import com.susu.damian.AliOss;
+import com.susu.damian.Paging;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -98,7 +99,7 @@ public class AliOSSUtils {
             SimplifiedObjectMeta objectMeta = ossClient.getSimplifiedObjectMeta(bucketName, objectSummary.getKey());
             Date lastModified = objectMeta.getLastModified();
             String localDateTime = TimeUtil.formatTime(lastModified);
-            fileList.add(new AliOss(i, customDomain + "/" + objectSummary.getKey(), objectSummary.getKey(),localDateTime));
+            fileList.add(new AliOss(i, customDomain + "/" + objectSummary.getKey(), objectSummary.getKey(), localDateTime));
             i++;
         }
         // 关闭ossClient
@@ -144,7 +145,7 @@ public class AliOSSUtils {
      * @param objectName 文件在oss中的路径
      * @return
      */
-    public boolean delete(String objectName) throws Exception{
+    public boolean delete(String objectName) throws Exception {
         // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
         //        使用Java SDK删除单个文件后，如何确定文件是否已成功删除？
@@ -152,17 +153,75 @@ public class AliOSSUtils {
 //        则说明已成功删除该文件。如果您需要进一步确认该文件是否已成功删除，
 //        可以调用OSSClient的doesObjectExist方法，该方法可以判断指定的文件是否存在。如果该方法返回false，则说明该文件已成功删除。
         boolean found = ossClient.doesObjectExist(bucketName, objectName);
-        if(found){
+        if (found) {
             //当路径正确文件存在时才执行删除方法
             // 删除文件或目录。如果要删除目录，目录必须为空。
             VoidResult voidResult = ossClient.deleteObject(bucketName, objectName);
             // 关闭ossClient
             ossClient.shutdown();
             return true;
-        }else {
+        } else {
             // 关闭ossClient
             ossClient.shutdown();
             return false;
+        }
+    }
+
+    /**
+     * 分页列举指定存储空间下指定前缀的所有文件。每页列举的文件个数通过maxKeys指定。
+     * @param keyPrefix 查询的路径
+     * @param page 查询第几页
+     * @param maxKeys 一页的最大个数
+     * @return
+     */
+    public Paging<AliOss> pagingEnumeration(String keyPrefix, Integer page,Integer maxKeys) {
+        Paging<AliOss> aliOssPaging = new Paging<>();
+        // 创建OSSClient实例。
+        OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+        String nextContinuationToken = null;
+        ListObjectsV2Result result = null;
+        //从第一页开始计数
+        Integer i = 1;
+        //文件的id
+        Integer j = 1;
+        //文件的总数
+        Integer sum = 0;
+        // 分页列举指定前缀的文件。
+        HashMap<Integer, List<AliOss>> pagingMap = new HashMap<>();
+        do {
+            ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request(bucketName).withMaxKeys(maxKeys);
+            listObjectsV2Request.setPrefix(keyPrefix);
+            listObjectsV2Request.setContinuationToken(nextContinuationToken);
+            result = ossClient.listObjectsV2(listObjectsV2Request);
+            List<OSSObjectSummary> sums = result.getObjectSummaries();
+            List<AliOss> aliOssList = new ArrayList<>();
+            for (OSSObjectSummary s : sums) {
+                //当前页数和需要分页查询的页数一样
+                if (i == page) {
+                    SimplifiedObjectMeta objectMeta = ossClient.getSimplifiedObjectMeta(bucketName, s.getKey());
+                    Date lastModified = objectMeta.getLastModified();
+                    String localDateTime = TimeUtil.formatTime(lastModified);
+                    aliOssList.add(new AliOss(j++, customDomain + "/" + s.getKey(), s.getKey(), localDateTime));
+                }
+                sum++;
+            }
+            if (i == page) {
+                pagingMap.put(i, aliOssList);
+                aliOssPaging.setData(pagingMap);
+            }
+            //下一页
+            i++;
+            nextContinuationToken = result.getNextContinuationToken();
+        } while (result.isTruncated());
+        // 关闭ossClient
+        ossClient.shutdown();
+        //当查询的页数小于等于当前总页数的时候
+        if(page<=i-1){
+            aliOssPaging.setTotalPages(i - 1);
+            aliOssPaging.setSize(sum);
+            return aliOssPaging;
+        }else{
+            return null;
         }
     }
 }

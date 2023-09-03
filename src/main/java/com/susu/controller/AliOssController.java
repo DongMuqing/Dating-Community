@@ -1,9 +1,9 @@
 package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
-import com.aliyun.oss.model.VoidResult;
 import com.susu.damian.AliOss;
 import com.susu.damian.Code;
+import com.susu.damian.Paging;
 import com.susu.damian.Result;
 import com.susu.util.AliOSSUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -80,6 +80,24 @@ public class AliOssController {
             return new Result(null, Code.DELETE_OK,"删除成功!");
         }else {
             return new Result(null, Code.DELETE_ERR,"路径错误!");
+        }
+    }
+
+    /**
+     * 指定路径的分页查询
+     * @param path
+     * @return
+     * @throws Exception
+     */
+    @PostMapping("/paging")
+    public Result paging(@RequestParam String path,
+                         @RequestParam Integer page,
+                         @RequestParam Integer maxkey) throws Exception {
+        Paging<AliOss> aliOssPaging = aliOSSUtils.pagingEnumeration(path,page,maxkey);
+        if (aliOssPaging!=null){
+            return new Result(aliOssPaging, Code.GET_OK,"查询成功!");
+        }else {
+            return new Result(null, Code.GET_ERR,"查询失败!");
         }
     }
 }
