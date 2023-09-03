@@ -67,9 +67,19 @@ public class AliOssController {
         String msg = fileurl != null ? "上传成功" : "上传失败，请重试！";
         return new Result(fileurl, code, msg);
     }
+
+    /**
+     * @param path 需要删除的文件路径
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/delete")
-    public Result delete( String path) throws Exception {
-        VoidResult delete = aliOSSUtils.delete(path);
-        return new Result(delete, Code.DELETE_OK,"删除成功");
+    public Result delete(@RequestParam String path) throws Exception {
+        boolean delete = aliOSSUtils.delete(path);
+        if(delete){
+            return new Result(null, Code.DELETE_OK,"删除成功!");
+        }else {
+            return new Result(null, Code.DELETE_ERR,"路径错误!");
+        }
     }
 }

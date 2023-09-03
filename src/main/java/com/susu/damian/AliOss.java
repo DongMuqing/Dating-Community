@@ -15,6 +15,6 @@ import lombok.*;
 public class AliOss {
     private Integer id;
     private String path;
-
+    private String relativePath;
     private String lastModified;
 }

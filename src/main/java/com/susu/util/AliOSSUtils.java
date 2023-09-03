@@ -98,7 +98,7 @@ public class AliOSSUtils {
             SimplifiedObjectMeta objectMeta = ossClient.getSimplifiedObjectMeta(bucketName, objectSummary.getKey());
             Date lastModified = objectMeta.getLastModified();
             String localDateTime = TimeUtil.formatTime(lastModified);
-            fileList.add(new AliOss(i, customDomain + "/" + objectSummary.getKey(), localDateTime));
+            fileList.add(new AliOss(i, customDomain + "/" + objectSummary.getKey(), objectSummary.getKey(),localDateTime));
             i++;
         }
         // 关闭ossClient
@@ -144,13 +144,25 @@ public class AliOSSUtils {
      * @param objectName 文件在oss中的路径
      * @return
      */
-    public VoidResult delete(String objectName) throws Exception{
+    public boolean delete(String objectName) throws Exception{
         // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
-        // 删除文件或目录。如果要删除目录，目录必须为空。
-        VoidResult voidResult = ossClient.deleteObject(bucketName, objectName);
-        // 关闭ossClient
-        ossClient.shutdown();
-        return voidResult;
+        //        使用Java SDK删除单个文件后，如何确定文件是否已成功删除？
+//        在OSS Java SDK中使用OSSClient的deleteObject方法删除单个文件时，如果该方法没有抛出异常，
+//        则说明已成功删除该文件。如果您需要进一步确认该文件是否已成功删除，
+//        可以调用OSSClient的doesObjectExist方法，该方法可以判断指定的文件是否存在。如果该方法返回false，则说明该文件已成功删除。
+        boolean found = ossClient.doesObjectExist(bucketName, objectName);
+        if(found){
+            //当路径正确文件存在时才执行删除方法
+            // 删除文件或目录。如果要删除目录，目录必须为空。
+            VoidResult voidResult = ossClient.deleteObject(bucketName, objectName);
+            // 关闭ossClient
+            ossClient.shutdown();
+            return true;
+        }else {
+            // 关闭ossClient
+            ossClient.shutdown();
+            return false;
+        }
     }
 }
