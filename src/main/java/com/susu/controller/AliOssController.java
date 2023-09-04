@@ -84,6 +84,7 @@ public class AliOssController {
     }
 
     /**
+     * 默认查询第一页 每页十条数据
      * 指定路径的分页查询
      * @param path
      * @return
@@ -91,8 +92,8 @@ public class AliOssController {
      */
     @PostMapping("/paging")
     public Result paging(@RequestParam String path,
-                         @RequestParam Integer page,
-                         @RequestParam Integer maxkey) throws Exception {
+                         @RequestParam(defaultValue = "1") Long page,
+                         @RequestParam(defaultValue = "10") Integer maxkey) throws Exception {
         Paging<AliOss> aliOssPaging = aliOSSUtils.pagingEnumeration(path,page,maxkey);
         if (aliOssPaging!=null){
             return new Result(aliOssPaging, Code.GET_OK,"查询成功!");

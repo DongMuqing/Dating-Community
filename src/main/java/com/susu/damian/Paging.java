@@ -17,9 +17,9 @@ import java.util.List;
 @ToString
 public class Paging<E> {
     //      当前页数  实体的数据
-    HashMap<Integer,List<E>> data;
+    HashMap<Long,List<E>> data;
     //总页数
-    Integer totalPages;
+    Long totalPages;
     //总数据条数
-    Integer size;
+    Long size;
 }

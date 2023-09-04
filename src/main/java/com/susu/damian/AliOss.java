@@ -13,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 public class AliOss {
-    private Integer id;
+    private Long id;
     private String path;
     private String relativePath;
     private String lastModified;

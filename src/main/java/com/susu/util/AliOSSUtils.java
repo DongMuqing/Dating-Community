@@ -93,7 +93,7 @@ public class AliOSSUtils {
         // 发起列举请求。
         ListObjectsV2Result result = ossClient.listObjectsV2(listObjectsV2Request);
         List<AliOss> fileList = new ArrayList<>();
-        int i = 0;
+        Long i = 0L;
         // objectSummaries的列表中给出的是目录下的文件。
         for (OSSObjectSummary objectSummary : result.getObjectSummaries()) {
             SimplifiedObjectMeta objectMeta = ossClient.getSimplifiedObjectMeta(bucketName, objectSummary.getKey());
@@ -174,20 +174,20 @@ public class AliOSSUtils {
      * @param maxKeys 一页的最大个数
      * @return
      */
-    public Paging<AliOss> pagingEnumeration(String keyPrefix, Integer page,Integer maxKeys) {
+    public Paging<AliOss> pagingEnumeration(String keyPrefix, Long page,Integer maxKeys) {
         Paging<AliOss> aliOssPaging = new Paging<>();
         // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
         String nextContinuationToken = null;
         ListObjectsV2Result result = null;
         //从第一页开始计数
-        Integer i = 1;
+        Long i = 1L;
         //文件的id
-        Integer j = 1;
+        Long j = 1L;
         //文件的总数
-        Integer sum = 0;
+        Long sum =0L;
         // 分页列举指定前缀的文件。
-        HashMap<Integer, List<AliOss>> pagingMap = new HashMap<>();
+        HashMap<Long, List<AliOss>> pagingMap = new HashMap<>();
         do {
             ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request(bucketName).withMaxKeys(maxKeys);
             listObjectsV2Request.setPrefix(keyPrefix);
