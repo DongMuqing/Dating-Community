@@ -3,8 +3,13 @@ package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.susu.entity.Code;
+import com.susu.entity.Post;
 import com.susu.entity.Result;
 import com.susu.entity.VisitorInfo;
 import com.susu.dao.VisitorInfoDao;
@@ -16,13 +21,11 @@ import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -64,13 +67,26 @@ public class AddressController {
         return new Result(null, code, msg);
     }
 
+    /**
+     * 获取访客信息
+     * @return
+     */
     @PostMapping("/getVisitorInfo")
-    public Result visitorInfo() {
-        List<VisitorInfo> visitorInfos = visitorInfoDao.selectList(new QueryWrapper<VisitorInfo>().lambda().
-                orderBy(true, false, VisitorInfo::getAccessTime));
-        Integer code = visitorInfos != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = visitorInfos != null ? "查询成功" : "数据查询失败，请重试！";
-        return new Result(visitorInfos, code, msg);
+    public Result visitorInfo(@RequestParam(defaultValue = "1") long current,
+                              @RequestParam(defaultValue = "20") long size) {
+        LambdaQueryWrapper<VisitorInfo> visitorInfoLambdaQueryWrapper = Wrappers.lambdaQuery();
+        visitorInfoLambdaQueryWrapper.orderBy(true, false, VisitorInfo::getAccessTime);
+        Page<VisitorInfo> visitorInfoPage = new Page<>(current , size);
+        IPage<VisitorInfo> postIPage = visitorInfoDao.selectPage(visitorInfoPage , visitorInfoLambdaQueryWrapper);
+        HashMap<String, Object> visitorInfoMap=new HashMap<>();
+        if (postIPage!=null){
+            visitorInfoMap.put("data",postIPage.getRecords());
+            visitorInfoMap.put("pages",postIPage.getPages());
+            visitorInfoMap.put("total",postIPage.getTotal());
+            return new Result(visitorInfoMap,Code.GET_OK,"查询成功");
+        }else{
+            return new Result(null,Code.GET_ERR,"查询失败");
+        }
     }
 
 }
