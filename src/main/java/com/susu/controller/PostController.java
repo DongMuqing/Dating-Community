@@ -2,12 +2,13 @@ package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.susu.damian.Code;
-import com.susu.damian.Comment;
-import com.susu.damian.Post;
-import com.susu.damian.Result;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.susu.damian.*;
 import com.susu.dao.CommentDao;
 import com.susu.dao.PostDao;
 import com.susu.util.IpInfo;
@@ -17,10 +18,7 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Date:2023/6/13 17:51
@@ -133,4 +131,28 @@ public class PostController {
         return new Result(posts,code,msg);
     }
 
+    /**
+     * post的分页查询
+     * 默认查询第一页 每页大小为10条数据
+     * @param current 查询第几页
+     * @param size 每页的大小
+     * @return
+     */
+    @PostMapping("/paging")
+    public Result paging(@RequestParam(defaultValue = "1") long current,
+                         @RequestParam(defaultValue = "10") long size){
+        LambdaQueryWrapper<Post> postLambdaQueryWrapper = Wrappers.lambdaQuery();
+        postLambdaQueryWrapper.orderBy(true, false, Post::getCreateTime);
+        Page<Post> postPage = new Page<>(current , size);
+        IPage<Post> postIPage = postDao.selectPage(postPage , postLambdaQueryWrapper);
+        HashMap<String, Object> postMap=new HashMap<>();
+        if (postIPage!=null){
+            postMap.put("data",postIPage.getRecords());
+            postMap.put("pages",postIPage.getPages());
+            postMap.put("total",postIPage.getTotal());
+            return new Result(postMap,Code.GET_OK,"查询成功");
+        }else{
+            return new Result(null,Code.GET_ERR,"查询失败");
+        }
+    }
 }
