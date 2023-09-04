@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.susu.damian.*;
+import com.susu.entity.*;
 import com.susu.dao.CommentDao;
 import com.susu.dao.PostDao;
 import com.susu.util.IpInfo;

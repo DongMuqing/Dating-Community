@@ -1,9 +1,8 @@
 package com.susu.exception;
 
 import cn.dev33.satoken.exception.NotLoginException;
-import cn.dev33.satoken.util.SaResult;
-import com.susu.damian.Code;
-import com.susu.damian.Result;
+import com.susu.entity.Code;
+import com.susu.entity.Result;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

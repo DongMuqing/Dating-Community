@@ -1,7 +1,7 @@
-package com.susu.damian;
+package com.susu.entity;
 
 
-import com.susu.damian.server.*;
+import com.susu.entity.server.*;
 import com.susu.util.Arith;
 import com.susu.util.IPUtil;
 import lombok.*;

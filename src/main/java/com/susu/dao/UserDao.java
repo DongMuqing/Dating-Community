@@ -1,7 +1,7 @@
 package com.susu.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.susu.damian.User;
+import com.susu.entity.User;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

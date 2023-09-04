@@ -1,6 +1,6 @@
 package com.susu.service.impl;
 
-import com.susu.damian.Article;
+import com.susu.entity.Article;
 import com.susu.dao.ArticleDao;
 import com.susu.service.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;

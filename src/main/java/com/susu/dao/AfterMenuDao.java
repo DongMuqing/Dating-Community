@@ -1,7 +1,7 @@
 package com.susu.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.susu.damian.AfterMenu;
+import com.susu.entity.AfterMenu;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

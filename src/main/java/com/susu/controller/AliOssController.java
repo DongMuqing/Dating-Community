@@ -1,10 +1,10 @@
 package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
-import com.susu.damian.AliOss;
-import com.susu.damian.Code;
-import com.susu.damian.Paging;
-import com.susu.damian.Result;
+import com.susu.entity.AliOss;
+import com.susu.entity.Code;
+import com.susu.entity.Paging;
+import com.susu.entity.Result;
 import com.susu.util.AliOSSUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

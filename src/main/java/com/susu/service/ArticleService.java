@@ -1,6 +1,6 @@
 package com.susu.service;
 
-import com.susu.damian.Article;
+import com.susu.entity.Article;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

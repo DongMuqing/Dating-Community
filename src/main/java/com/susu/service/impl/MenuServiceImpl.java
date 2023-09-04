@@ -1,6 +1,6 @@
 package com.susu.service.impl;
 
-import com.susu.damian.Menu;
+import com.susu.entity.Menu;
 import com.susu.dao.MenuDao;
 import com.susu.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,9 +2,9 @@ package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
-import com.susu.damian.Code;
-import com.susu.damian.Result;
-import com.susu.damian.Server;
+import com.susu.entity.Code;
+import com.susu.entity.Result;
+import com.susu.entity.Server;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;

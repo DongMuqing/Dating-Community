@@ -2,10 +2,10 @@ package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
-import com.susu.damian.AfterMenu;
-import com.susu.damian.Code;
-import com.susu.damian.Menu;
-import com.susu.damian.Result;
+import com.susu.entity.AfterMenu;
+import com.susu.entity.Code;
+import com.susu.entity.Menu;
+import com.susu.entity.Result;
 import com.susu.dao.AfterMenuDao;
 import com.susu.service.MenuService;
 import lombok.extern.slf4j.Slf4j;

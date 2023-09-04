@@ -1,4 +1,4 @@
-package com.susu.damian;
+package com.susu.entity;
 
 
 import com.baomidou.mybatisplus.annotation.IdType;

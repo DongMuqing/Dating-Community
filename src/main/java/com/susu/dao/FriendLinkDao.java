@@ -1,7 +1,7 @@
 package com.susu.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.susu.damian.FriendLink;
+import com.susu.entity.FriendLink;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

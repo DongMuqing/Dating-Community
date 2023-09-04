@@ -2,8 +2,8 @@ package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
-import com.susu.damian.Code;
-import com.susu.damian.Result;
+import com.susu.entity.Code;
+import com.susu.entity.Result;
 import com.susu.dao.ArticleDao;
 import com.susu.dao.PostDao;
 import com.susu.dao.VisitorInfoDao;

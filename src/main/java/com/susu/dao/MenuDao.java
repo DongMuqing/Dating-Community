@@ -1,6 +1,6 @@
 package com.susu.dao;
 
-import com.susu.damian.Menu;
+import com.susu.entity.Menu;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 

@@ -1,4 +1,4 @@
-package com.susu.damian;
+package com.susu.entity;
 
 /**
  * @Date:2023/6/9 17:50
