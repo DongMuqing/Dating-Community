@@ -109,35 +109,19 @@ public class AliOSSUtils {
         return fileList;
     }
 
-    public Map<Integer, List<String>> getDirectoryAndFilePath() {
-        // 创建OSSClient实例。
+    public  List<String> getDirectoryAndFilePath() {
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
-        // 构造ListObjectsRequest请求。
-        ListObjectsRequest listObjectsRequest = new ListObjectsRequest(bucketName);
-        // 列举文件。
-        ObjectListing listing = ossClient.listObjects(listObjectsRequest);
-        // 遍历所有文件。
-        List<String> directory = new ArrayList<>();
-        List<String> filePaths = new ArrayList<>();
-        Map<Integer, List<String>> ossMap = new HashMap<>();
-        for (OSSObjectSummary objectSummary : listing.getObjectSummaries()) {
-            String key = objectSummary.getKey();
-            //如果最后的字符为/则表示是一个路径
-            //与传统文件系统中的层级结构不同，OSS内部使用扁平结构存储数据，即所有数据均以对象（Object）的形式保存在存储空间（Bucket）中。
-            // 为方便管理，OSS管理控制台将所有文件名以正斜线（/）结尾的文件显示为文件夹，实现类似于Windows文件夹的基本功能
-            if (key.substring(key.length() - 1).equals("/")) {
-                directory.add(key);
-            } else {
-                //不是文件目录
-                filePaths.add(customDomain + "/" + key);
+        List<String> directoryList=new ArrayList<>();
+        try {
+            List<String> allDirectories = listAllDirectories(ossClient, bucketName, "");
+            for (String directory : allDirectories) {
+                 directoryList.add(directory);
             }
+        } finally {
+            ossClient.shutdown();
         }
-        // 关闭ossClient
-        ossClient.shutdown();
-        ossMap.put(0, directory);
-        ossMap.put(1, filePaths);
-        return ossMap;
-    }
+        return directoryList;
+}
 
     /**
      * 删除指定的单个文件
@@ -169,12 +153,13 @@ public class AliOSSUtils {
 
     /**
      * 分页列举指定存储空间下指定前缀的所有文件。每页列举的文件个数通过maxKeys指定。
+     *
      * @param keyPrefix 查询的路径
-     * @param page 查询第几页
-     * @param maxKeys 一页的最大个数
+     * @param page      查询第几页
+     * @param maxKeys   一页的最大个数
      * @return
      */
-    public Paging<AliOss> pagingEnumeration(String keyPrefix, Long page,Integer maxKeys) {
+    public Paging<AliOss> pagingEnumeration(String keyPrefix, Long page, Integer maxKeys) {
         Paging<AliOss> aliOssPaging = new Paging<>();
         // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
@@ -185,7 +170,7 @@ public class AliOSSUtils {
         //文件的id
         Long j = 1L;
         //文件的总数
-        Long sum =0L;
+        Long sum = 0L;
         // 分页列举指定前缀的文件。
         HashMap<Long, List<AliOss>> pagingMap = new HashMap<>();
         do {
@@ -216,12 +201,32 @@ public class AliOSSUtils {
         // 关闭ossClient
         ossClient.shutdown();
         //当查询的页数小于等于当前总页数的时候
-        if(page<=i-1){
-            aliOssPaging.setTotalPages(i - 1);
-            aliOssPaging.setSize(sum);
+        if (page <= i - 1) {
+            aliOssPaging.setPages(i - 1);
+            aliOssPaging.setTotal(sum);
             return aliOssPaging;
-        }else{
+        } else {
             return null;
         }
+    }
+
+    /**
+     * 递归获取oss目录及其子目录
+     * @param ossClient
+     * @param bucketName
+     * @param prefix
+     * @return
+     */
+    private static List<String> listAllDirectories(OSS ossClient, String bucketName, String prefix) {
+        List<String> directories = new ArrayList<>();
+        ListObjectsRequest listObjectsRequest = new ListObjectsRequest(bucketName);
+        listObjectsRequest.setDelimiter("/");
+        listObjectsRequest.setPrefix(prefix);
+        ObjectListing objectListing = ossClient.listObjects(listObjectsRequest);
+        for (String commonPrefix : objectListing.getCommonPrefixes()) {
+            directories.add(commonPrefix);
+            directories.addAll(listAllDirectories(ossClient, bucketName, commonPrefix));
+        }
+        return directories;
     }
 }

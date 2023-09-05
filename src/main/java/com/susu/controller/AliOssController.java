@@ -28,13 +28,12 @@ public class AliOssController {
     @Autowired
     private AliOSSUtils aliOSSUtils;
 
-    @GetMapping
     /**
      * 获取所有oss路径
      */
+    @GetMapping
     public Result getDirectory() {
-        Map<Integer, List<String>> directoryAndFilePath = aliOSSUtils.getDirectoryAndFilePath();
-        List<String> directory = directoryAndFilePath.get(0);
+        List<String> directory = aliOSSUtils.getDirectoryAndFilePath();
         Integer code = directory != null ? Code.GET_OK : Code.GET_ERR;
         String msg = directory != null ? "查询成功" : "数据查询失败，请重试！";
         return new Result(directory, code, msg);
@@ -58,14 +57,16 @@ public class AliOssController {
 
     @PostMapping("/upload")
     public Result upload(@RequestPart("files") MultipartFile[] files, String path) throws Exception {
-        List<String> fileurl = new ArrayList<>();
-        for (MultipartFile file : files) {
-            String url = aliOSSUtils.upload(file, path);
-            fileurl.add(url);
+        if(files.length>0){
+            List<String> fileurl = new ArrayList<>();
+            for (MultipartFile file : files) {
+                String url = aliOSSUtils.upload(file, path);
+                fileurl.add(url);
+            }
+            return new Result(fileurl, Code.GET_OK, "上传成功");
+        }else {
+            return new Result(null,Code.GET_ERR,"请选择上传文件！");
         }
-        Integer code = fileurl != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = fileurl != null ? "上传成功" : "上传失败，请重试！";
-        return new Result(fileurl, code, msg);
     }
 
     /**

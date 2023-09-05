@@ -19,7 +19,7 @@ public class Paging<E> {
     //      当前页数  实体的数据
     HashMap<Long,List<E>> data;
     //总页数
-    Long totalPages;
+    Long pages;
     //总数据条数
-    Long size;
+    Long total;
 }
