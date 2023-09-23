@@ -4,6 +4,9 @@ import org.lionsoul.ip2region.xdb.Searcher;
 import org.springframework.core.io.ResourceLoader;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -14,18 +17,27 @@ import java.util.concurrent.TimeUnit;
  */
 
 public class IpInfo {
-    private static Searcher searcher;
-//    private static String dbPath="/coding/Management-system/data/ip2region.xdb";
-    private static String dbPath = "./data/ip2region.xdb";
+    private static final Searcher searcher;
 
+    /*
+     * Initialize the Searcher object.
+     */
     static {
-        try {
-            // 1、从 dbPath 加载整个 xdb 到内存。
-            // 2、使用上述的 cBuff 创建一个完全基于内存的查询对象。
-            byte[] cBuff = Searcher.loadContentFromFile(dbPath);
-            searcher = Searcher.newWithBuffer(cBuff);
-        } catch (Exception e) {
-            e.printStackTrace();
+        long startTime = System.nanoTime();
+        try (InputStream inputStream = IpInfo.class.getClassLoader().getResourceAsStream("data/ip2region.xdb")) {
+            if (inputStream == null) {
+                throw new IOException("ip2region.xdb loading failed.");
+            }
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    output.write(buffer, 0, bytesRead);
+                }
+                searcher  = Searcher.newWithBuffer(output.toByteArray());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
