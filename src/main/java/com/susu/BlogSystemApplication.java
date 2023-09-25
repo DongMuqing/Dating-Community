@@ -7,6 +7,9 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
+import java.util.TimeZone;
+
 @SpringBootApplication
 public class BlogSystemApplication {
     //当使用外部url获取数据的时候
@@ -22,6 +25,11 @@ public class BlogSystemApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(BlogSystemApplication.class, args);
+    }
+    //解决在线上服务器会相差8小时问题
+    @PostConstruct
+    void started() {
+        TimeZone.setDefault(TimeZone.getTimeZone("Asia/Shanghai"));
     }
 
 }

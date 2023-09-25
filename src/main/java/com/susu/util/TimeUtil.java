@@ -13,12 +13,10 @@ public class TimeUtil {
     public static LocalDateTime getLocalDateTime() {
         // 获取当前时间
         LocalDateTime currentTime = LocalDateTime.now();
-        // 定义日期时间格式化器
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        // 格式化当前时间为指定格式
-        String formattedTimeAsString = currentTime.format(formatter);
+        //修复bug  LocalDateTime解析日期字符串值时丢弃秒值“00“
+        String visitTimeFormat = currentTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
         // 将格式化后的字符串转换为 LocalDateTime 对象
-        LocalDateTime LocalDateTime = java.time.LocalDateTime.parse(formattedTimeAsString, formatter);
+        LocalDateTime LocalDateTime = java.time.LocalDateTime.parse(visitTimeFormat);
         return LocalDateTime;
     }
 
