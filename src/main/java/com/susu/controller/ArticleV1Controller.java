@@ -1,6 +1,7 @@
 package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.annotation.SaIgnore;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.susu.entity.Article;
@@ -39,6 +40,7 @@ public class ArticleV1Controller {
     }
 
     @PostMapping("/add")
+    @SaCheckRole("管理员")
     public Result addArticle(@RequestBody Article articles) {
         int flag = articleDao.insert(articles);
         Integer code = flag != 0 ? Code.GET_OK : Code.GET_ERR;
@@ -48,6 +50,7 @@ public class ArticleV1Controller {
 
 
     @DeleteMapping("/del")
+    @SaCheckRole("管理员")
     public Result delArticle(@RequestBody Article articles) {
         int flag = articleDao.deleteById(articles);
         Integer code = flag != 0 ? Code.GET_OK : Code.GET_ERR;
@@ -57,6 +60,7 @@ public class ArticleV1Controller {
     }
 
     @PostMapping("/edit")
+    @SaCheckRole("管理员")
     public Result editArticle(@RequestBody Article articles) {
         int flag = articleDao.updateById(articles);
         Integer code = flag != 0 ? Code.GET_OK : Code.GET_ERR;

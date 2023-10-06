@@ -1,6 +1,7 @@
 package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.susu.entity.AliOss;
 import com.susu.entity.Code;
 import com.susu.entity.Paging;
@@ -56,6 +57,7 @@ public class AliOssController {
     }
 
     @PostMapping("/upload")
+    @SaCheckRole("管理员")
     public Result upload(@RequestPart("files") MultipartFile[] files, String path) throws Exception {
         if(files.length>0){
             List<String> fileurl = new ArrayList<>();
@@ -75,6 +77,7 @@ public class AliOssController {
      * @throws Exception
      */
     @PostMapping("/delete")
+    @SaCheckRole("管理员")
     public Result delete(@RequestParam String path) throws Exception {
         boolean delete = aliOSSUtils.delete(path);
         if(delete){

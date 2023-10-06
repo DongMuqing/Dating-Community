@@ -1,6 +1,7 @@
 package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -92,6 +93,7 @@ public class CommentController {
     }
 
     @DeleteMapping
+    @SaCheckRole("管理员")
     public Result delete(@RequestBody Integer id) {
         QueryWrapper<Comment> query = new QueryWrapper<>();
         query.lambda().eq(Comment::getCommentId, id);

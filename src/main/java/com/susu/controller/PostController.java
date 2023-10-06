@@ -1,6 +1,7 @@
 package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.annotation.SaIgnore;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -53,6 +54,7 @@ public class PostController {
      * @return
      */
     @PostMapping
+    @SaCheckRole("管理员")
     public Result publish(@RequestBody Post post, HttpServletRequest request) throws Exception {
         //添加发布地址
         String addressInfo = IpInfo.getAddress(request, resourceLoader);
@@ -109,7 +111,8 @@ public class PostController {
     }
 
     @DeleteMapping("/delete")
-    public Result deleteById(@RequestBody Integer id){
+    @SaCheckRole("管理员")
+    public Result deleteById(@RequestParam("id") Integer id){
         //存在外键 先删除对应评论
         QueryWrapper<Comment> query = new QueryWrapper<>();
         query.lambda().eq(Comment::getPostId, id);
@@ -123,6 +126,7 @@ public class PostController {
     }
 
     @PostMapping("/edit")
+    @SaCheckRole("管理员")
     public Result edits(@RequestBody Post post){
         int flag= postDao.updateById(post);
         Integer code = flag != 0 ? Code.UPDATE_OK : Code.UPDATE_ERR;
