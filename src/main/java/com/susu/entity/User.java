@@ -20,6 +20,14 @@ public class User {
     @TableId(type = IdType.AUTO)
     private  Integer id;
     private String avatar;
+    private String email;
     private String username;
     private String password;
+    private String role;
+    public User(String email, String username, String password) {
+        this.email = email;
+        this.username = username;
+        this.password = password;
+    }
+
 }
