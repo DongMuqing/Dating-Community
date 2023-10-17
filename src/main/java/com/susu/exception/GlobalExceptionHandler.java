@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
     //权限不够
     @ExceptionHandler(NotRoleException.class)
     public Result notRoleException() {
-        return new Result(null,90231,"权限不够,请联系管理员！");
+        return new Result(null,Code.NO_PERMISSION,"权限不够,请联系管理员！");
     }
     @ExceptionHandler(MissingServletRequestPartException.class)
     public Result missingServletRequestPartException() {

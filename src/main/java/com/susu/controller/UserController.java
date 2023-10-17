@@ -1,16 +1,21 @@
 package com.susu.controller;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.dev33.satoken.exception.NotRoleException;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import cn.hutool.core.lang.Validator;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.susu.dao.UserDao;
 import com.susu.entity.Code;
 import com.susu.entity.Result;
 import com.susu.entity.User;
 import com.susu.service.EmailService;
+import com.susu.util.TimeUtil;
 import com.susu.util.VerCodeGenerateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +23,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -28,7 +34,7 @@ import java.util.concurrent.TimeUnit;
 @RequestMapping("api/{version}/user")
 @CrossOrigin
 @Slf4j
-
+@SaCheckLogin
 public class UserController {
     @Autowired
     private UserDao userDao;
@@ -38,23 +44,50 @@ public class UserController {
     private StringRedisTemplate stringRedisTemplate;
 
     @PostMapping
-    public Result Login(@RequestBody User user) {
-        Integer code = null;
+    @SaIgnore
+    public Result Login(@RequestBody User user) throws JsonProcessingException {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(User::getUsername, user.getUsername()).eq(User::getPassword, user.getPassword());
         User loginUser = userDao.selectOne(wrapper);
         // 第一步：比对前端提交的账号名称、密码
-        if (!loginUser.equals("")) {
-            // 第二步：根据账号id，进行登录
+        if (loginUser!=null) {
+            // 第一步：根据账号id，进行登录
             StpUtil.login(loginUser.getId());
-            // 第2步，获取 Token  相关参数
             SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
+            //记录登录时间
+            UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.lambda().eq(User::getId, loginUser.getId()).
+                    set(User::getLoginTime, TimeUtil.getLocalDateTime());
+            userDao.update(null, updateWrapper);
             return new Result(tokenInfo, Code.GET_OK, "登录成功");
         }
-        code = Code.GET_ERR;
-        return new Result(null, code, "登录失败");
+        return new Result(null,Code.GET_ERR, "登录失败");
     }
 
+    /**
+     * 根据id获取用户信息
+     * @param id
+     * @return
+     */
+    @PostMapping("getinfo")
+    public Result getInfoById(@RequestParam("id") String id){
+        String loginId = (String) StpUtil.getTokenInfo().loginId;
+        if (loginId.equals(id)){
+            User user = userDao.selectById(id);
+            if (user!=null){
+                HashMap<String,Object>  userInfo=new HashMap<>();
+                userInfo.put("username",user.getUsername());
+                userInfo.put("avatar",user.getAvatar());
+                userInfo.put("logintime",user.getLoginTime());
+                userInfo.put("role",user.getRole());
+                return new Result( userInfo, Code.GET_OK, "查询成功!");
+            }else {
+                return new Result(null, Code.GET_ERR, "查询失败!");
+            }
+        }else {
+            return new Result(null,Code.NO_PERMISSION,"权限不够,请联系管理员！");
+        }
+    }
     /**
      * 用户的注册
      *
@@ -109,6 +142,7 @@ public class UserController {
     public Result sendCode(@RequestParam("email") String email,
                            @RequestParam("username") String username) throws MessagingException {
         boolean isEmail = Validator.isEmail(email);
+        System.out.println(email+"=====>"+isEmail);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(User::getUsername, username);
         User isUser = userDao.selectOne(wrapper);
