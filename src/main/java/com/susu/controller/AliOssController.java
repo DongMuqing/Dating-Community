@@ -33,6 +33,7 @@ public class AliOssController {
      * 获取所有oss路径
      */
     @GetMapping
+    @SaCheckRole("管理员")
     public Result getDirectory() {
         List<String> directory = aliOSSUtils.getDirectoryAndFilePath();
         Integer code = directory != null ? Code.GET_OK : Code.GET_ERR;
@@ -48,6 +49,7 @@ public class AliOssController {
      * @throws Exception
      */
     @PostMapping("/filepath")
+    @SaCheckRole("管理员")
     public Result getFilePath(@RequestParam String path) throws Exception {
         path.substring(path.length() - 1);
         List<AliOss> filepath = aliOSSUtils.ListRequest(path);
@@ -95,6 +97,7 @@ public class AliOssController {
      * @throws Exception
      */
     @PostMapping("/paging")
+    @SaCheckRole("管理员")
     public Result paging(@RequestParam String path,
                          @RequestParam(defaultValue = "1") Long page,
                          @RequestParam(defaultValue = "10") Integer maxkey) throws Exception {

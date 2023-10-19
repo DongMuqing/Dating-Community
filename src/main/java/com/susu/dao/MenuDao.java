@@ -1,5 +1,6 @@
 package com.susu.dao;
 
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.susu.entity.Menu;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
@@ -11,8 +12,5 @@ import java.util.List;
  * @Created by Muqing
  */
 @Mapper
-public interface MenuDao {
-
-    @Select("select * from tb_menu")
-    List<Menu> getAll();
+public interface MenuDao extends BaseMapper<Menu> {
 }

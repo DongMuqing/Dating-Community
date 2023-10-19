@@ -13,5 +13,5 @@ import java.util.List;
 @Transactional
 @Service
 public interface MenuService {
-    List<Menu> getAll();
+
 }

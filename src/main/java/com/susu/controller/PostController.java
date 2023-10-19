@@ -3,6 +3,7 @@ package com.susu.controller;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.annotation.SaIgnore;
+import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -12,11 +13,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.susu.entity.*;
 import com.susu.dao.CommentDao;
 import com.susu.dao.PostDao;
+import com.susu.util.AliOSSUtils;
 import com.susu.util.IpInfo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -36,9 +39,12 @@ public class PostController {
 
     @Autowired
     private CommentDao commentDao;
-
+    @Autowired
+    private AliOSSUtils aliOSSUtils;
     @Autowired
     private ResourceLoader resourceLoader;
+
+    private static final String userPostFilePath = "post";
     @GetMapping
     public Result getAll() {
         //时间降序查询
@@ -59,6 +65,8 @@ public class PostController {
         //添加发布地址
         String addressInfo = IpInfo.getAddress(request, resourceLoader);
         post.setLocation(addressInfo);
+        //添加发布用户的id
+        post.setUserId((Integer) StpUtil.getLoginId());
         int flag = postDao.insert(post);
         Integer code = flag != 0 ? Code.SAVE_OK : Code.SAVE_ERR;
         String msg = flag != 0 ? "提交成功！" : "数据提交失败，请重试！";
@@ -79,7 +87,7 @@ public class PostController {
         //复杂性： 如果你需要进行复杂的数据整合和处理，通过Java整合可能更加灵活和易于管理。
         // 将 dynamics 转化为 Map，以便通过 ID 进行快速查找
         //为什么i不能为0？ 为0时第一条动态评论为空？
-        int i=0;
+        int i = 0;
         for (Post post : posts) {
             post.setComments(new ArrayList<>()); // 初始化评论列表
             for (Comment comment : comments) {
@@ -100,63 +108,154 @@ public class PostController {
     /**
      * 只需要接受一个动态id和点赞数来进行更新数据
      */
-    public Result upvote(@RequestBody Post post){
-        UpdateWrapper<Post> updateWrapper =new UpdateWrapper<>();
+    public Result upvote(@RequestBody Post post) {
+        UpdateWrapper<Post> updateWrapper = new UpdateWrapper<>();
         updateWrapper.lambda().eq(Post::getId, post.getId()).
-                               set(Post::getUpvoteNum, post.getUpvoteNum());
+                set(Post::getUpvoteNum, post.getUpvoteNum());
         int update = postDao.update(null, updateWrapper);
         Integer code = update != 0 ? Code.GET_OK : Code.GET_ERR;
         String msg = update != 0 ? "点赞成功" : "点赞失败，QAQ！";
-        return new Result(null,code,msg);
+        return new Result(null, code, msg);
     }
 
     @DeleteMapping("/delete")
     @SaCheckRole("管理员")
-    public Result deleteById(@RequestParam("id") Integer id){
+    public Result deleteById(@RequestParam("id") Integer id) {
         //存在外键 先删除对应评论
         QueryWrapper<Comment> query = new QueryWrapper<>();
         query.lambda().eq(Comment::getPostId, id);
         commentDao.delete(query);
         Integer flag = postDao.deleteById(id);
         //返回数据更新页面数据
-        List<Post> posts = postDao.selectList(null);
+        LambdaQueryWrapper<Post> postLambdaQueryWrapper = Wrappers.lambdaQuery();
+        postLambdaQueryWrapper.orderBy(true, false, Post::getCreateTime);
+        List<Post> posts = postDao.selectList(postLambdaQueryWrapper);
         Integer code = flag != 0 ? Code.DELETE_OK : Code.DELETE_ERR;
         String msg = flag != 0 ? "删除成功" : "删除失败，QAQ！";
-        return new Result(posts,code,msg);
+        return new Result(posts, code, msg);
     }
 
     @PostMapping("/edit")
     @SaCheckRole("管理员")
-    public Result edits(@RequestBody Post post){
-        int flag= postDao.updateById(post);
+    public Result edits(@RequestBody Post post) {
+        int flag = postDao.updateById(post);
         Integer code = flag != 0 ? Code.UPDATE_OK : Code.UPDATE_ERR;
         String msg = flag != 0 ? "修改成功" : "修改失败，QAQ！";
         List<Post> posts = postDao.selectList(null);
-        return new Result(posts,code,msg);
+        return new Result(posts, code, msg);
     }
 
     /**
-     * post的分页查询
+     * 所有post数据的分页查询
      * 默认查询第一页 每页大小为10条数据
+     *
      * @param current 查询第几页
-     * @param size 每页的大小
+     * @param size    每页的大小
      * @return
      */
     @PostMapping("/paging")
-    public Result paging(@RequestParam(defaultValue = "1") long current,
-                         @RequestParam(defaultValue = "10") long size){
+    @SaCheckRole("管理员")
+    public Result pagingAll(@RequestParam(defaultValue = "1") long current,
+                            @RequestParam(defaultValue = "10") long size) {
         LambdaQueryWrapper<Post> postLambdaQueryWrapper = Wrappers.lambdaQuery();
         postLambdaQueryWrapper.orderBy(true, false, Post::getCreateTime);
-        Page<Post> postPage = new Page<>(current , size);
-        IPage<Post> postIPage = postDao.selectPage(postPage , postLambdaQueryWrapper);
-        HashMap<String, Object> postMap=new HashMap<>();
-        if (postIPage!=null){
-            postMap.put("data",postIPage.getRecords());
-            postMap.put("pages",postIPage.getPages());
-            postMap.put("total",postIPage.getTotal());
-            return new Result(postMap,Code.GET_OK,"查询成功");
-        }else{
-            return new Result(null,Code.GET_ERR,"查询失败");
+        Page<Post> postPage = new Page<>(current, size);
+        IPage<Post> postIPage = postDao.selectPage(postPage, postLambdaQueryWrapper);
+        HashMap<String, Object> postMap = new HashMap<>();
+        if (postIPage != null) {
+            postMap.put("data", postIPage.getRecords());
+            postMap.put("pages", postIPage.getPages());
+            postMap.put("total", postIPage.getTotal());
+            return new Result(postMap, Code.GET_OK, "查询成功");
+        } else {
+            return new Result(null, Code.GET_ERR, "查询失败");
         }
+    }
+
+    /**
+     * 获取当前用户的动态分页信息
+     *
+     * @param current
+     * @param size
+     * @return
+     */
+    @PostMapping("/paging/user")
+    @SaCheckRole("用户")
+    public Result pagingByUserId(@RequestParam(defaultValue = "1") long current,
+                                 @RequestParam(defaultValue = "10") long size) {
+        LambdaQueryWrapper<Post> postLambdaQueryWrapper = Wrappers.lambdaQuery();
+        postLambdaQueryWrapper.eq(Post::getUserId, StpUtil.getLoginId()).orderBy(true, false, Post::getCreateTime);
+        Page<Post> postPage = new Page<>(current, size);
+        IPage<Post> postIPage = postDao.selectPage(postPage, postLambdaQueryWrapper);
+        HashMap<String, Object> postMap = new HashMap<>();
+        if (postIPage != null) {
+            postMap.put("data", postIPage.getRecords());
+            postMap.put("pages", postIPage.getPages());
+            postMap.put("total", postIPage.getTotal());
+            return new Result(postMap, Code.GET_OK, "查询成功");
+        } else {
+            return new Result(null, Code.GET_ERR, "查询失败");
+        }
+    }
+
+    @PostMapping("/edit/user")
+    @SaCheckRole("用户")
+    public Result editsByUserId(@RequestBody Post post) {
+        //当前用户只能修改自己的数据
+        if (postDao.selectById(post.getId()).getUserId() == StpUtil.getLoginId()) {
+            int flag = postDao.updateById(post);
+            Integer code = flag != 0 ? Code.UPDATE_OK : Code.UPDATE_ERR;
+            String msg = flag != 0 ? "修改成功" : "修改失败，QAQ！";
+            List<Post> posts = postDao.selectList(null);
+            return new Result(posts, code, msg);
+        } else {
+            return new Result(null, Code.SAVE_ERR, "修改失败！");
+        }
+    }
+
+    @DeleteMapping("/delete/user")
+    @SaCheckRole("用户")
+    public Result deleteByUserId(@RequestParam("id") Integer id) {
+        //当前用户只能删除自己的数据
+        if (postDao.selectById(id).getUserId()==StpUtil.getLoginId()) {
+            //存在外键 先删除对应评论
+            QueryWrapper<Comment> query = new QueryWrapper<>();
+            query.lambda().eq(Comment::getPostId, id);
+            commentDao.delete(query);
+            Integer flag = postDao.deleteById(id);
+            //返回数据更新页面数据
+            LambdaQueryWrapper<Post> postLambdaQueryWrapper = Wrappers.lambdaQuery();
+            postLambdaQueryWrapper.eq(Post::getUserId, StpUtil.getLoginId()).orderBy(true, false, Post::getCreateTime);
+            List<Post> posts = postDao.selectList(postLambdaQueryWrapper);
+            Integer code = flag != 0 ? Code.DELETE_OK : Code.DELETE_ERR;
+            String msg = flag != 0 ? "删除成功" : "删除失败，QAQ！";
+            return new Result(posts, code, msg);
+        } else {
+            return new Result(null, Code.DELETE_ERR,"删除失败！");
+        }
+    }
+
+
+    @PostMapping
+    @SaCheckRole("用户")
+    public Result publishByUser(@RequestBody Post post,
+                                @RequestPart("files") MultipartFile[] files,
+                                HttpServletRequest request) throws Exception {
+        //添加发布地址
+        String addressInfo = IpInfo.getAddress(request, resourceLoader);
+        post.setLocation(addressInfo);
+        //添加发布用户的id
+        post.setUserId((Integer) StpUtil.getLoginId());
+        List<String> fileurl = new ArrayList<>();
+        //将动态资源上传，返回其地址添加到post对象中
+        for (MultipartFile file : files) {
+            String url = aliOSSUtils.upload(file,userPostFilePath);
+            fileurl.add(url);
+        }
+        post.setImgSrclist(fileurl.toString());
+        int flag = postDao.insert(post);
+        Integer code = flag != 0 ? Code.SAVE_OK : Code.SAVE_ERR;
+        String msg = flag != 0 ? "提交成功！" : "数据提交失败，请重试！";
+        return new Result(null, code, msg);
     }
 }

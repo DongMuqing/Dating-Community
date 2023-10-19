@@ -43,6 +43,7 @@ public class CommentController {
     private AliOSSUtils aliOSSUtils;
 
     @GetMapping
+    @SaCheckRole("管理员")
     public Result getAll() {
         List<Comment> comments = commentDao.selectList(new QueryWrapper<Comment>().lambda().orderBy(true, false, Comment::getCreateTime));
         Integer code = comments != null ? Code.GET_OK : Code.GET_ERR;

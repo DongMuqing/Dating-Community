@@ -15,10 +15,4 @@ import java.util.List;
 @Service
 public class MenuServiceImpl implements MenuService {
 
-    @Autowired
-    private MenuDao menuDao;
-    @Override
-    public List<Menu> getAll() {
-        return menuDao.getAll();
-    }
 }

@@ -25,6 +25,8 @@ import java.time.LocalDateTime;
 public class Article {
     @TableId(type = IdType.AUTO)
     private Integer id;
+    @TableField(value = "user_id")
+    private Integer userId;
     private String cover;
     private String title;
 

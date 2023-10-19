@@ -2,6 +2,7 @@ package com.susu.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.*;
 
 /**
@@ -14,6 +15,7 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@TableName("tb_menu")
 public class Menu {
     @TableId(type = IdType.AUTO)
     private Integer id;
@@ -22,4 +24,5 @@ public class Menu {
     private String label;
     private String icon;
     private String url;
+    private String located;
 }

@@ -1,13 +1,13 @@
 package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.annotation.SaIgnore;
-import com.susu.entity.AfterMenu;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.susu.dao.MenuDao;
 import com.susu.entity.Code;
 import com.susu.entity.Menu;
 import com.susu.entity.Result;
-import com.susu.dao.AfterMenuDao;
-import com.susu.service.MenuService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -27,26 +27,35 @@ import java.util.List;
 @Slf4j
 @SaCheckLogin
 public class MenuController {
-    @Autowired
-    private MenuService menuService;
 
     @Autowired
-    private AfterMenuDao afterMenuDao;
+    private MenuDao menuDao;
 
+    /**
+     * 获取前台导航栏
+     *
+     * @return
+     */
     @GetMapping
     @SaIgnore
     public Result getMenu() {
-        List<Menu> menus = menuService.getAll();
+        List<Menu> menus = menuDao.selectList(new QueryWrapper<Menu>().lambda().eq(Menu::getLocated, "before"));
         Integer code = menus != null ? Code.GET_OK : Code.GET_ERR;
         String msg = menus != null ? "查询成功" : "数据查询失败，请重试！";
         return new Result(menus, code, msg);
     }
 
+    /**
+     * 获取后台导航栏
+     * @return
+     */
     @GetMapping("/after")
+    @SaCheckRole("管理员")
     public Result getMenus() {
-        List<AfterMenu> menus = afterMenuDao.selectList(null);
+        List<Menu> menus = menuDao.selectList(new QueryWrapper<Menu>().lambda().eq(Menu::getLocated, "backstage"));
         Integer code = menus != null ? Code.GET_OK : Code.GET_ERR;
         String msg = menus != null ? "查询成功" : "数据查询失败，请重试！";
         return new Result(menus, code, msg);
     }
+
 }

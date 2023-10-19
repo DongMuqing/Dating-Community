@@ -25,6 +25,8 @@ import java.util.List;
 public class Post {
     @TableId(type = IdType.AUTO)
     private Integer id;
+    @TableField(value = "user_id")
+    private Integer userId;
     private String avatar;
     @TableField(value="create_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
