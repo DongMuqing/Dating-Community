@@ -31,7 +31,7 @@ public class FriendLinkController {
     private AliOSSUtils aliOSSUtils;
 
     //上传指定的文件夹
-    private String folderPath = "Blog/friendlink/";
+    private static final String FOLDER_PATH = "Blog/friendlink/";
 
     @GetMapping
     @SaIgnore
@@ -49,7 +49,7 @@ public class FriendLinkController {
                          @RequestParam("name") String name,
                          @RequestParam("intro") String intro,
                          @RequestPart("logo") MultipartFile image) throws IOException {
-        String logoUrl = aliOSSUtils.upload(image, folderPath);
+        String logoUrl = aliOSSUtils.upload(image, FOLDER_PATH);
         FriendLink friendLink = new FriendLink(logoUrl, url, name, intro);
         int friendLinks = friendLinkDao.insert(friendLink);
         Integer code = friendLinks != 0 ? Code.SAVE_OK : Code.SAVE_ERR;

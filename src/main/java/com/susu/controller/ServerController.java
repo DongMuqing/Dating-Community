@@ -1,7 +1,7 @@
 package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
-import cn.dev33.satoken.annotation.SaIgnore;
+import cn.dev33.satoken.annotation.SaCheckRole;
 import com.susu.entity.Code;
 import com.susu.entity.Result;
 import com.susu.entity.Server;
@@ -24,15 +24,16 @@ public class ServerController {
 
     /**
      * 服务器运行信息 cpu jvm Mem sys sysfile
+     *
      * @return
      * @throws Exception
      */
     @GetMapping
-    @SaIgnore
+    @SaCheckRole("管理员")
     public Result getInfo() throws Exception {
         Server server = new Server();
         server.copyTo();
-        return new Result(server, Code.GET_OK,"success");
+        return new Result(server, Code.GET_OK, "success");
     }
 
 

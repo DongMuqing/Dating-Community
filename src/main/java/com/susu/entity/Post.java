@@ -27,7 +27,6 @@ public class Post {
     private Integer id;
     @TableField(value = "user_id")
     private Integer userId;
-    private String avatar;
     @TableField(value="create_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
@@ -41,8 +40,14 @@ public class Post {
     private String musicUrl;
 
     @TableField(value="img_srclist")
-    private  String imgSrclist;
+    private  String imgSrcList;
 
     @TableField(exist = false) //  不映射到数据库
     private List<Comment> comments;
+
+    public Post(LocalDateTime createTime, String title, String content) {
+        this.createTime = createTime;
+        this.title = title;
+        this.content = content;
+    }
 }

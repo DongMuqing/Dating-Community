@@ -24,10 +24,10 @@ public class Comment {
 //    @TableField(value = "comment_id")
     @TableId(value = "comment_id",type = IdType.AUTO)
     private Integer commentId;
-
-
+    @TableField(value = "post_id")
     private Integer postId;
-
+    @TableField(value = "user_id")
+    private Integer userId;
     private String avatar;
     private String username;
     private  String content;

@@ -29,5 +29,13 @@ public class GlobalExceptionHandler {
     public Result missingServletRequestPartException() {
         return new Result(null, Code.SYSTEM_ERR,"请选择文件！");
     }
+    @ExceptionHandler(NullPointerException.class)
+    public Result nullPointerException() {
+        return new Result(null,Code.SYSTEM_UNKNOW_ERR,"未知错误,管理员正在修复!");
+    }
+    @ExceptionHandler(IllegalArgumentException.class)
+    public Result illegalArgumentException() {
+        return new Result(null,Code.SAVE_ERR,"请正确选择上传文件!");
+    }
 }
 

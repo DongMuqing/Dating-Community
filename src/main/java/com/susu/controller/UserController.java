@@ -2,14 +2,12 @@ package com.susu.controller;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.dev33.satoken.exception.NotRoleException;
 import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import cn.hutool.core.lang.Validator;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.susu.dao.UserDao;
 import com.susu.entity.Code;
 import com.susu.entity.Result;
@@ -45,12 +43,12 @@ public class UserController {
 
     @PostMapping
     @SaIgnore
-    public Result Login(@RequestBody User user) throws JsonProcessingException {
+    public Result Login(@RequestBody User user) {
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(User::getUsername, user.getUsername()).eq(User::getPassword, user.getPassword());
         User loginUser = userDao.selectOne(wrapper);
         // 第一步：比对前端提交的账号名称、密码
-        if (loginUser!=null) {
+        if (loginUser != null) {
             // 第一步：根据账号id，进行登录
             StpUtil.login(loginUser.getId());
             SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
@@ -61,33 +59,35 @@ public class UserController {
             userDao.update(null, updateWrapper);
             return new Result(tokenInfo, Code.GET_OK, "登录成功");
         }
-        return new Result(null,Code.GET_ERR, "登录失败");
+        return new Result(null, Code.GET_ERR, "登录失败");
     }
 
     /**
      * 根据id获取用户信息
+     *
      * @param id
      * @return
      */
     @PostMapping("getinfo")
-    public Result getInfoById(@RequestParam("id") String id){
+    public Result getInfoById(@RequestParam("id") String id) {
         String loginId = (String) StpUtil.getTokenInfo().loginId;
-        if (loginId.equals(id)){
+        if (loginId.equals(id)) {
             User user = userDao.selectById(id);
-            if (user!=null){
-                HashMap<String,Object>  userInfo=new HashMap<>();
-                userInfo.put("username",user.getUsername());
-                userInfo.put("avatar",user.getAvatar());
-                userInfo.put("logintime",user.getLoginTime());
-                userInfo.put("role",user.getRole());
-                return new Result( userInfo, Code.GET_OK, "查询成功!");
-            }else {
+            if (user != null) {
+                HashMap<String, Object> userInfo = new HashMap<>();
+                userInfo.put("username", user.getUsername());
+                userInfo.put("avatar", user.getAvatar());
+                userInfo.put("logintime", user.getLoginTime());
+                userInfo.put("role", user.getRole());
+                return new Result(userInfo, Code.GET_OK, "查询成功!");
+            } else {
                 return new Result(null, Code.GET_ERR, "查询失败!");
             }
-        }else {
-            return new Result(null,Code.NO_PERMISSION,"权限不够,请联系管理员！");
+        } else {
+            return new Result(null, Code.NO_PERMISSION, "权限不够,请联系管理员！");
         }
     }
+
     /**
      * 用户的注册
      *
@@ -142,7 +142,7 @@ public class UserController {
     public Result sendCode(@RequestParam("email") String email,
                            @RequestParam("username") String username) throws MessagingException {
         boolean isEmail = Validator.isEmail(email);
-        System.out.println(email+"=====>"+isEmail);
+        System.out.println(email + "=====>" + isEmail);
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.lambda().eq(User::getUsername, username);
         User isUser = userDao.selectOne(wrapper);

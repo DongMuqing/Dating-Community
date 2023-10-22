@@ -2,6 +2,7 @@ package com.susu.controller;
 
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
+import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaIgnore;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -46,9 +47,14 @@ public class AddressController {
     private ResourceLoader resourceLoader;
 
 
+    /**
+     * 记录访客信息
+     * @param request
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/visitorInfo")
     @SaIgnore
-    //访问者信息
     public Result visitorInfo(HttpServletRequest request) throws Exception {
         int flag;
         UserAgent userAgent = UserAgent.parseUserAgentString(request.getHeader("user-agent"));
@@ -72,6 +78,7 @@ public class AddressController {
      * @return
      */
     @PostMapping("/getVisitorInfo")
+    @SaCheckPermission(orRole = {"管理员", "游客"})
     public Result visitorInfo(@RequestParam(defaultValue = "1") long current,
                               @RequestParam(defaultValue = "20") long size) {
         LambdaQueryWrapper<VisitorInfo> visitorInfoLambdaQueryWrapper = Wrappers.lambdaQuery();
