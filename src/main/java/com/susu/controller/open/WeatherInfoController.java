@@ -1,4 +1,4 @@
-package com.susu.controller;
+package com.susu.controller.open;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;

@@ -1,4 +1,4 @@
-package com.susu.controller;
+package com.susu.controller.open;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
@@ -30,13 +30,9 @@ import java.util.List;
 @SaCheckLogin
 public class MenuController {
 
-    private static final String USER_MENU = "user_backstage";
-    private static final String ADMIN_MENU = "backstage";
+    private static final String BEFORE_MENU = "before";
     @Autowired
     private MenuDao menuDao;
-    @Autowired
-    private UserDao userDao;
-
     /**
      * 获取前台导航栏
      *
@@ -45,31 +41,9 @@ public class MenuController {
     @GetMapping
     @SaIgnore
     public Result getMenu() {
-        List<Menu> menus = menuDao.selectList(new QueryWrapper<Menu>().lambda().eq(Menu::getLocated, "before"));
+        List<Menu> menus = menuDao.selectList(new QueryWrapper<Menu>().lambda().eq(Menu::getLocated,BEFORE_MENU));
         Integer code = menus != null ? Code.GET_OK : Code.GET_ERR;
         String msg = menus != null ? "查询成功" : "数据查询失败，请重试！";
         return new Result(menus, code, msg);
     }
-
-    /**
-     * 获取后台导航栏
-     *
-     * @return
-     */
-    @GetMapping("/after")
-    @SaCheckLogin
-    public Result getMenus() {
-        String role = userDao.selectOne(new QueryWrapper<User>().lambda().
-                eq(User::getId, StpUtil.getLoginId())).getRole();
-        List<Menu> menus = switch (role) {
-            case "管理员", "游客" ->
-                    menuDao.selectList(new QueryWrapper<Menu>().lambda().eq(Menu::getLocated, ADMIN_MENU));
-            case "用户" -> menuDao.selectList(new QueryWrapper<Menu>().lambda().eq(Menu::getLocated, USER_MENU));
-            default -> null;
-        };
-        Integer code = menus != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = menus != null ? "查询成功" : "数据查询失败，请重试！";
-        return new Result(menus, code, msg);
-    }
-
 }

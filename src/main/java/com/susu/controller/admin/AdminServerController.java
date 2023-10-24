@@ -1,4 +1,4 @@
-package com.susu.controller;
+package com.susu.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;
@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @Created by Muqing
  */
 @RestController
-@RequestMapping("api/{version}/server")
+@RequestMapping("api/{version}/admin/server")
 @CrossOrigin
 @Slf4j
 @SaCheckLogin
-public class ServerController {
+public class AdminServerController {
 
     /**
      * 服务器运行信息 cpu jvm Mem sys sysfile
