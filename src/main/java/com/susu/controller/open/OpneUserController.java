@@ -1,10 +1,8 @@
-package com.susu.controller;
+package com.susu.controller.open;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
-import cn.dev33.satoken.stp.SaTokenInfo;
 import cn.dev33.satoken.stp.StpUtil;
-import cn.dev33.satoken.util.SaResult;
 import cn.hutool.core.lang.Validator;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
@@ -33,7 +31,7 @@ import java.util.concurrent.TimeUnit;
 @CrossOrigin
 @Slf4j
 @SaCheckLogin
-public class UserController {
+public class OpneUserController {
     @Autowired
     private UserDao userDao;
     @Autowired
@@ -51,13 +49,13 @@ public class UserController {
         if (loginUser != null) {
             // 第一步：根据账号id，进行登录
             StpUtil.login(loginUser.getId());
-            SaTokenInfo tokenInfo = StpUtil.getTokenInfo();
+            User loginUserInfo = new User(loginUser.getId(), loginUser.getAvatar(), loginUser.getUsername(), loginUser.getLoginTime(), loginUser.getRole(),StpUtil.getTokenInfo());
             //记录登录时间
             UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
             updateWrapper.lambda().eq(User::getId, loginUser.getId()).
                     set(User::getLoginTime, TimeUtil.getLocalDateTime());
             userDao.update(null, updateWrapper);
-            return new Result(tokenInfo, Code.GET_OK, "登录成功");
+            return new Result(loginUserInfo, Code.GET_OK, "登录成功");
         }
         return new Result(null, Code.GET_ERR, "登录失败");
     }
@@ -167,9 +165,5 @@ public class UserController {
         }
     }
 
-    @PostMapping("logout")
-    public SaResult logout() {
-        StpUtil.logout();
-        return SaResult.ok();
-    }
+
 }

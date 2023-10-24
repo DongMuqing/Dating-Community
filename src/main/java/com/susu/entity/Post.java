@@ -41,7 +41,8 @@ public class Post {
 
     @TableField(value="img_srclist")
     private  String imgSrcList;
-
+    private String avatar;
+    private String username;
     @TableField(exist = false) //  不映射到数据库
     private List<Comment> comments;
 
@@ -49,5 +50,16 @@ public class Post {
         this.createTime = createTime;
         this.title = title;
         this.content = content;
+    }
+
+    public Post(Integer userId, LocalDateTime createTime, String title, String content, String location, String imgSrcList, String avatar, String username) {
+        this.userId = userId;
+        this.createTime = createTime;
+        this.title = title;
+        this.content = content;
+        this.location = location;
+        this.imgSrcList = imgSrcList;
+        this.avatar = avatar;
+        this.username = username;
     }
 }

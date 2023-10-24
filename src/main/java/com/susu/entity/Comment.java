@@ -39,10 +39,8 @@ public class Comment {
     private String address;
 
 
-    public Comment(Integer postId, String avatar,String username, String content, LocalDateTime createTime, String address) {
+    public Comment(Integer postId, String content, LocalDateTime createTime, String address) {
         this.postId = postId;
-        this.avatar=avatar;
-        this.username = username;
         this.content = content;
         this.createTime = createTime;
         this.address = address;

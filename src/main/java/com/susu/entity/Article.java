@@ -27,6 +27,7 @@ public class Article {
     private Integer id;
     @TableField(value = "user_id")
     private Integer userId;
+    private String username;
     private String cover;
     private String title;
 
