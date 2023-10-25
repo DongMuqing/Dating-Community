@@ -44,7 +44,7 @@ public class AliOSSUtils {
      * @return
      * @throws IOException
      */
-    public String upload(MultipartFile file, String folderPath) throws IOException {
+    public  String upload(MultipartFile file, String folderPath) throws IOException {
         // 创建ClientConfiguration实例，您可以根据实际情况修改默认参数。
         ClientBuilderConfiguration conf = new ClientBuilderConfiguration();
 // 开启CNAME，CNAME用于将自定义域名绑定到目标Bucket。

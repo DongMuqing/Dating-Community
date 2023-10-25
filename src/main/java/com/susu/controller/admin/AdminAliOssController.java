@@ -57,6 +57,13 @@ public class AdminAliOssController {
         return new Result(filepath, code, msg);
     }
 
+    /**
+     * 通用上传接口
+     * @param files 上传文件
+     * @param path 上传到的路径
+     * @return
+     * @throws Exception
+     */
     @PostMapping("/upload")
     @SaCheckRole("管理员")
     public Result upload(@RequestPart("files") MultipartFile[] files, String path) throws Exception {

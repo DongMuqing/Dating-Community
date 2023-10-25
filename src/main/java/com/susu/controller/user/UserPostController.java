@@ -56,7 +56,7 @@ public class UserPostController {
     @SaCheckPermission(orRole = {"管理员", "用户"})
     public Result publishByUser(@RequestParam("content") String content,
                                 @RequestParam("title") String title,
-                                @RequestPart("files") MultipartFile[] files,
+                                @RequestPart("files") String fileUrl,
                                 HttpServletRequest request) throws Exception {
         if (content == null || content.trim().isEmpty()) {
             return new Result(null, Code.SAVE_ERR, "内容不可为空!");
@@ -64,30 +64,14 @@ public class UserPostController {
         if (title == null || title.trim().isEmpty()) {
             return new Result(null, Code.SAVE_ERR, "标题不可为空!");
         }
-        for (MultipartFile file : files) {
-            if (file.isEmpty()) {
-                return new Result(null, Code.SAVE_ERR, "请选择图片!");
-            }
-            if (!IOUtil.isImage(file)) {
-                return new Result(null, Code.SAVE_ERR, "请上传jpeg,png格式的图片!");
-            }
-        }
-        List<String> fileUrl = new ArrayList<>();
-        //将动态资源上传，返回其地址添加到post对象中
-        for (MultipartFile file : files) {
-            String url = aliOSSUtils.upload(file, POST_FILE_PATH);
-            fileUrl.add(url);
-        }
         //添加发布地址
         String addressInfo = IpInfo.getAddress(request, resourceLoader);
         Integer userId=Integer.valueOf((String) StpUtil.getLoginId());
-        // 图片资源地址
-        String fileUrlString =  String.join(",", fileUrl);
         LocalDateTime createTime=TimeUtil.getLocalDateTime();
         //查询用户信息
         User user = userDao.selectOne(new LambdaQueryWrapper<User>().eq(User::getId, userId));
         //post对象
-        Post post = new Post(userId,createTime, title, content,addressInfo,fileUrlString,user.getAvatar(),user.getUsername());
+        Post post = new Post(userId,createTime, title, content,addressInfo,fileUrl,user.getAvatar(),user.getUsername());
         int flag = postDao.insert(post);
         Integer code = flag != 0 ? Code.SAVE_OK : Code.SAVE_ERR;
         String msg = flag != 0 ? "发布成功！" : "发布失败，请重试！";

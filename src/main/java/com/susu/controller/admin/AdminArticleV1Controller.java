@@ -77,7 +77,7 @@ public class AdminArticleV1Controller {
      */
     @GetMapping("/get")
     @SaCheckRole("管理员")
-    public Result getArticleByUserId() {
+    public Result getArticle() {
         List<Article> userArticle = getAllArticle();
         Integer code = userArticle != null ? Code.GET_OK : Code.GET_ERR;
         String msg = userArticle != null ? "查询成功" : "数据查询失败，请重试！";

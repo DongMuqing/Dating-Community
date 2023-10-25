@@ -49,4 +49,12 @@ public class User {
         this.role = role;
         this.tokenInfo=tokenInfo;
     }
+
+    //用户修改自己信息构造方法
+    public User(String avatar, String email, String username, String password) {
+        this.avatar = avatar;
+        this.email = email;
+        this.username = username;
+        this.password = password;
+    }
 }
