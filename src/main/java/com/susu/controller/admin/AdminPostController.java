@@ -13,18 +13,15 @@ import com.susu.dao.PostDao;
 import com.susu.dao.UserDao;
 import com.susu.entity.*;
 import com.susu.util.AliOSSUtils;
-import com.susu.util.IOUtil;
 import com.susu.util.IpInfo;
 import com.susu.util.TimeUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -70,7 +67,7 @@ public class AdminPostController {
      *
      * @param content 内容
      * @param title   标题
-     * @param files   动态图片资源
+     * @param url 图片资源地址
      * @param request
      * @return
      * @throws Exception
@@ -79,7 +76,7 @@ public class AdminPostController {
     @SaCheckRole("管理员")
     public Result publishByUser(@RequestParam("content") String content,
                                 @RequestParam("title") String title,
-                                @RequestPart("files") MultipartFile[] files,
+                                @RequestPart("url") String url,
                                 HttpServletRequest request) throws Exception {
         if (content == null || content.trim().isEmpty()) {
             return new Result(null, Code.SAVE_ERR, "内容不可为空!");
@@ -87,30 +84,16 @@ public class AdminPostController {
         if (title == null || title.trim().isEmpty()) {
             return new Result(null, Code.SAVE_ERR, "标题不可为空!");
         }
-        for (MultipartFile file : files) {
-            if (file.isEmpty()) {
-                return new Result(null, Code.SAVE_ERR, "请选择图片!");
-            }
-            if (!IOUtil.isImage(file)) {
-                return new Result(null, Code.SAVE_ERR, "请上传jpeg,png格式的图片!");
-            }
+        if (url == null || url.trim().isEmpty()) {
+            return new Result(null, Code.SAVE_ERR, "请上传图片！");
         }
-        List<String> fileUrl = new ArrayList<>();
-        //将动态资源上传，返回其地址添加到post对象中
-        for (MultipartFile file : files) {
-            String url = aliOSSUtils.upload(file, POST_FILE_PATH);
-            fileUrl.add(url);
-        }
-        //添加发布地址
-        String addressInfo = IpInfo.getAddress(request, resourceLoader);
-        Integer userId = Integer.valueOf((String) StpUtil.getLoginId());
-        // 图片资源地址
-        String fileUrlString = String.join(",", fileUrl);
-        LocalDateTime createTime = TimeUtil.getLocalDateTime();
+        String addressInfo = IpInfo.getAddress(request, resourceLoader); //添加发布地址
+        Integer userId = Integer.valueOf((String) StpUtil.getLoginId()); //发布用户id
+        LocalDateTime createTime = TimeUtil.getLocalDateTime(); //发布时间
         //查询用户信息
         User user = userDao.selectOne(new LambdaQueryWrapper<User>().eq(User::getId, userId));
         //post对象
-        Post post = new Post(userId, createTime, title, content, addressInfo, fileUrlString, user.getAvatar(), user.getUsername());
+        Post post = new Post(userId, createTime, title, content, addressInfo, url, user.getAvatar(), user.getUsername());
         int flag = postDao.insert(post);
         Integer code = flag != 0 ? Code.SAVE_OK : Code.SAVE_ERR;
         String msg = flag != 0 ? "发布成功！" : "发布失败，请重试！";
@@ -183,41 +166,5 @@ public class AdminPostController {
         LambdaQueryWrapper<Post> postLambdaQueryWrapper = Wrappers.lambdaQuery();
         postLambdaQueryWrapper.eq(Post::getUserId, StpUtil.getLoginId()).orderBy(true, false, Post::getCreateTime);
         return postDao.selectList(postLambdaQueryWrapper);
-    }
-
-    /**
-     * 用户分页动态数据
-     *
-     * @param current
-     * @param size
-     * @return
-     */
-    public HashMap<String, Object> pagingPost(long current, long size) {
-        LambdaQueryWrapper<Post> postLambdaQueryWrapper = Wrappers.lambdaQuery();
-        postLambdaQueryWrapper.eq(Post::getUserId, StpUtil.getLoginId()).orderBy(true, false, Post::getCreateTime);
-        Page<Post> postPage = new Page<>(current, size);
-        IPage<Post> postIPage = postDao.selectPage(postPage, postLambdaQueryWrapper);
-        HashMap<String, Object> postMap = new HashMap<>();
-        if (postIPage != null) {
-            postMap.put("data", postIPage.getRecords());
-            postMap.put("pages", postIPage.getPages());
-            postMap.put("total", postIPage.getTotal());
-        } else {
-            return null;
-        }
-        return postMap;
-    }
-
-    /**
-     * 操作的数据是否是当前用户的
-     *
-     * @param id 被操作数据的用户id
-     * @return
-     */
-    public boolean isCurrentUser(Integer id) {
-        if (id.equals(Integer.valueOf((String) StpUtil.getLoginId()))) {
-            return true;
-        }
-        return false;
     }
 }

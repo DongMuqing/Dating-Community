@@ -49,7 +49,7 @@ public class OpneUserController {
         if (loginUser != null) {
             // 第一步：根据账号id，进行登录
             StpUtil.login(loginUser.getId());
-            User loginUserInfo = new User(loginUser.getId(), loginUser.getAvatar(), loginUser.getUsername(), loginUser.getLoginTime(), loginUser.getRole(),StpUtil.getTokenInfo());
+            User loginUserInfo = new User(loginUser.getId(), loginUser.getAvatar(), loginUser.getUsername(), loginUser.getLoginTime(), loginUser.getRole(), StpUtil.getTokenInfo());
             //记录登录时间
             UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
             updateWrapper.lambda().eq(User::getId, loginUser.getId()).

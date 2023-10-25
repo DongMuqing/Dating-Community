@@ -52,8 +52,7 @@ public class UserPostController {
     private ResourceLoader resourceLoader;
 
     @PostMapping("/publish")
-    //满足角色权限其一即可
-    @SaCheckPermission(orRole = {"管理员", "用户"})
+    @SaCheckRole("用户")
     public Result publishByUser(@RequestParam("content") String content,
                                 @RequestParam("title") String title,
                                 @RequestPart("files") String fileUrl,
@@ -64,9 +63,12 @@ public class UserPostController {
         if (title == null || title.trim().isEmpty()) {
             return new Result(null, Code.SAVE_ERR, "标题不可为空!");
         }
+        if (fileUrl == null || fileUrl.trim().isEmpty()){
+            return new Result(null, Code.SAVE_ERR, "请上传图片！");
+        }
         //添加发布地址
         String addressInfo = IpInfo.getAddress(request, resourceLoader);
-        Integer userId=Integer.valueOf((String) StpUtil.getLoginId());
+        Integer userId=StpUtil.getLoginIdAsInt();
         LocalDateTime createTime=TimeUtil.getLocalDateTime();
         //查询用户信息
         User user = userDao.selectOne(new LambdaQueryWrapper<User>().eq(User::getId, userId));

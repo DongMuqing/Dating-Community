@@ -21,6 +21,7 @@ public class AdminUploadController {
 
     private static final String AVATAR_PATH = "Userpics/"; //头像oss目录
     private static final String POST_PATH = "Post/";  //动态oss目录
+    private static final String ARTICLE_PATH = "Article/"; //文章oss目录
 
     /**
      * 头像上传
@@ -65,7 +66,7 @@ public class AdminUploadController {
     @SaCheckRole("管理员")
     public Result uploadArticleImage(@RequestPart("cover") MultipartFile cover) throws IOException {
         UploadUtil uploadUtil = new UploadUtil();
-        Result result = uploadUtil.singleImageUpload(cover, AVATAR_PATH);
+        Result result = uploadUtil.singleImageUpload(cover,ARTICLE_PATH);
         return result;
     }
 }
