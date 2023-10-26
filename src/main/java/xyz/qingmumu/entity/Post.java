@@ -36,9 +36,6 @@ public class Post {
     @TableField(value="upvote_num")
     private Integer upvoteNum;
 
-    @TableField(value="music_url")
-    private String musicUrl;
-
     @TableField(value="img_srclist")
     private  String imgSrcList;
     private String avatar;

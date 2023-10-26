@@ -50,8 +50,7 @@ public class AdminUserController {
 
 
     /**
-     * 修改用户信息 可进行提权
-     *
+     * 修改用户信息 进行提权
      * @param user
      * @return
      */
@@ -59,7 +58,20 @@ public class AdminUserController {
     @SaCheckRole("管理员")
     public Result edit(@RequestBody User user) {
         userDao.update(user, new UpdateWrapper<User>().lambda().eq(User::getId, user.getId()));
+
         return new Result(null, Code.UPDATE_OK, "修改用户信息成功！");
+    }
+
+    /**
+     * 根据id删除用户
+     * @param id 用户id
+     * @return
+     */
+    @DeleteMapping("/delete")
+    @SaCheckRole("管理员")
+    public Result delete(@RequestParam("id") Integer id) {
+        userDao.deleteById(id);
+        return new Result(null, Code.UPDATE_OK, "删除成功！");
     }
 
     /**

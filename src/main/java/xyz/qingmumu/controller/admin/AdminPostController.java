@@ -106,8 +106,8 @@ public class AdminPostController {
     @DeleteMapping("/delete")
     @SaCheckRole("管理员")
     public Result deleteById(@RequestParam("id") Integer id) {
-        List<Post> posts = deletePost(id);
-        return new Result(posts, Code.DELETE_OK, "删除成功");
+        deletePost(id);
+        return new Result(null, Code.DELETE_OK, "删除成功");
     }
 
     @PostMapping("/edit")
