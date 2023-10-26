@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.susu</groupId>
-    <artifactId>Blog-system</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
-    <name>Blog-system</name>
-    <description>Blog-system</description>
+    <artifactId>Dating-Community</artifactId>
+    <version>1.0</version>
+    <name>Dating-Community</name>
+    <description>Dating-Community</description>
     <properties>
         <java.version>1.8</java.version>
     </properties>
