@@ -4,13 +4,12 @@ import com.aliyun.oss.ClientBuilderConfiguration;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
 import com.aliyun.oss.model.*;
-import xyz.qingmumu.entity.AliOss;
-import xyz.qingmumu.entity.Paging;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import xyz.qingmumu.entity.AliOss;
+import xyz.qingmumu.entity.Paging;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,8 +22,6 @@ import java.util.*;
 @Component
 @Slf4j
 public class AliOSSUtils {
-    @Autowired
-    private AliOSSProperties aliOSSProperties;
     @Value("${aliyun.oss.customDomain}")
     private String customDomain;
     @Value("${aliyun.oss.endpoint}")
@@ -37,6 +34,27 @@ public class AliOSSUtils {
     private String accessKeySecret;
 
     /**
+     * 递归获取oss目录及其子目录
+     *
+     * @param ossClient
+     * @param bucketName
+     * @param prefix
+     * @return
+     */
+    private static List<String> listAllDirectories(OSS ossClient, String bucketName, String prefix) {
+        List<String> directories = new ArrayList<>();
+        ListObjectsRequest listObjectsRequest = new ListObjectsRequest(bucketName);
+        listObjectsRequest.setDelimiter("/");
+        listObjectsRequest.setPrefix(prefix);
+        ObjectListing objectListing = ossClient.listObjects(listObjectsRequest);
+        for (String commonPrefix : objectListing.getCommonPrefixes()) {
+            directories.add(commonPrefix);
+            directories.addAll(listAllDirectories(ossClient, bucketName, commonPrefix));
+        }
+        return directories;
+    }
+
+    /**
      * 上传文件到oss
      *
      * @param file       文件
@@ -44,7 +62,7 @@ public class AliOSSUtils {
      * @return
      * @throws IOException
      */
-    public  String upload(MultipartFile file, String folderPath) throws IOException {
+    public String upload(MultipartFile file, String folderPath) throws IOException {
         // 创建ClientConfiguration实例，您可以根据实际情况修改默认参数。
         ClientBuilderConfiguration conf = new ClientBuilderConfiguration();
 // 开启CNAME，CNAME用于将自定义域名绑定到目标Bucket。
@@ -79,7 +97,7 @@ public class AliOSSUtils {
      * @return 所有文件的url地址
      * @throws Exception
      */
-    public List<AliOss> ListRequest(String path) throws Exception {
+    public List<AliOss> ListRequest(String path)  {
         // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
         // 构造ListObjectsV2Request请求。
@@ -109,19 +127,19 @@ public class AliOSSUtils {
         return fileList;
     }
 
-    public  List<String> getDirectoryAndFilePath() {
+    public List<String> getDirectoryAndFilePath() {
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
-        List<String> directoryList=new ArrayList<>();
+        List<String> directoryList = new ArrayList<>();
         try {
             List<String> allDirectories = listAllDirectories(ossClient, bucketName, "");
             for (String directory : allDirectories) {
-                 directoryList.add(directory);
+                directoryList.add(directory);
             }
         } finally {
             ossClient.shutdown();
         }
         return directoryList;
-}
+    }
 
     /**
      * 删除指定的单个文件
@@ -129,7 +147,7 @@ public class AliOSSUtils {
      * @param objectName 文件在oss中的路径
      * @return
      */
-    public boolean delete(String objectName) throws Exception {
+    public boolean delete(String objectName)  {
         // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
         //        使用Java SDK删除单个文件后，如何确定文件是否已成功删除？
@@ -208,25 +226,5 @@ public class AliOSSUtils {
         } else {
             return null;
         }
-    }
-
-    /**
-     * 递归获取oss目录及其子目录
-     * @param ossClient
-     * @param bucketName
-     * @param prefix
-     * @return
-     */
-    private static List<String> listAllDirectories(OSS ossClient, String bucketName, String prefix) {
-        List<String> directories = new ArrayList<>();
-        ListObjectsRequest listObjectsRequest = new ListObjectsRequest(bucketName);
-        listObjectsRequest.setDelimiter("/");
-        listObjectsRequest.setPrefix(prefix);
-        ObjectListing objectListing = ossClient.listObjects(listObjectsRequest);
-        for (String commonPrefix : objectListing.getCommonPrefixes()) {
-            directories.add(commonPrefix);
-            directories.addAll(listAllDirectories(ossClient, bucketName, commonPrefix));
-        }
-        return directories;
     }
 }

@@ -3,6 +3,7 @@ package xyz.qingmumu.controller.user;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;
+import org.springframework.beans.factory.annotation.Autowired;
 import xyz.qingmumu.entity.Code;
 import xyz.qingmumu.entity.Result;
 import xyz.qingmumu.util.UploadUtil;
@@ -18,7 +19,8 @@ import java.io.IOException;
 @Slf4j
 @SaCheckLogin
 public class UploadController {
-
+    @Autowired
+    private UploadUtil uploadUtil;
     private static final String AVATAR_PATH = "Userpics/"; //头像oss目录
     private static final String POST_PATH = "Post/";  //动态oss目录
     private static final String ARTICLE_PATH = "Article/"; //文章oss目录
@@ -32,7 +34,6 @@ public class UploadController {
     @PostMapping("/uploadAvatar")
     @SaCheckRole("用户")
     public Result upload(@RequestPart("avatar") MultipartFile avatar) throws IOException {
-        UploadUtil uploadUtil = new UploadUtil();
         Result result = uploadUtil.singleImageUpload(avatar, AVATAR_PATH);
         return result;
     }
@@ -50,7 +51,6 @@ public class UploadController {
         if (files.length > 9) {
             return new Result(null, Code.SAVE_ERR, "图片不能超过九张！");
         }
-        UploadUtil uploadUtil = new UploadUtil();
         Result result = uploadUtil.multipleImageUpload(files, POST_PATH);
         return result;
     }
@@ -64,7 +64,6 @@ public class UploadController {
     @PostMapping("/uploadArticleImage")
     @SaCheckRole("用户")
     public Result uploadArticleImage(@RequestPart("cover") MultipartFile cover) throws IOException {
-        UploadUtil uploadUtil = new UploadUtil();
         Result result = uploadUtil.singleImageUpload(cover, ARTICLE_PATH);
         return result;
     }

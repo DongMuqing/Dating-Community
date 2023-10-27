@@ -4,14 +4,19 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.stp.StpUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import xyz.qingmumu.dao.ArticleDao;
 import xyz.qingmumu.entity.Article;
 import xyz.qingmumu.entity.Code;
+import xyz.qingmumu.entity.Post;
 import xyz.qingmumu.entity.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -77,11 +82,21 @@ public class AdminArticleV1Controller {
      */
     @GetMapping("/get")
     @SaCheckRole("管理员")
-    public Result getArticle() {
-        List<Article> userArticle = getAllArticle();
-        Integer code = userArticle != null ? Code.GET_OK : Code.GET_ERR;
-        String msg = userArticle != null ? "查询成功" : "数据查询失败，请重试！";
-        return new Result(userArticle, code, msg);
+    public Result getArticle(@RequestParam(defaultValue = "1") long current,
+                             @RequestParam(defaultValue = "10") long size) {
+        LambdaQueryWrapper<Article> articleLambdaQueryWrapper = Wrappers.lambdaQuery();
+        articleLambdaQueryWrapper.orderBy(true, false, Article::getCreateTime);
+        Page<Article> articlePage = new Page<>(current, size);
+        IPage<Article> articleIPage = articleDao.selectPage(articlePage, articleLambdaQueryWrapper);
+        HashMap<String, Object> postMap = new HashMap<>();
+        if (articleIPage != null) {
+            postMap.put("data", articleIPage.getRecords());
+            postMap.put("pages", articleIPage.getPages());
+            postMap.put("total", articleIPage.getTotal());
+            return new Result(postMap, Code.GET_OK, "查询成功");
+        } else {
+            return new Result(null, Code.GET_ERR, "查询失败");
+        }
     }
     /**
      * 获取所有文章时间降序

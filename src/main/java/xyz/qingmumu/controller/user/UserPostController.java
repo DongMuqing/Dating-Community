@@ -35,7 +35,6 @@ import java.util.List;
 @Slf4j
 @SaCheckLogin
 public class UserPostController {
-    private static final String POST_FILE_PATH = "Post/";
     @Autowired
     private PostDao postDao;
     @Autowired
@@ -43,23 +42,18 @@ public class UserPostController {
     @Autowired
     private UserDao userDao;
     @Autowired
-    private AliOSSUtils aliOSSUtils;
-    @Autowired
     private ResourceLoader resourceLoader;
 
     @PostMapping("/publish")
     @SaCheckRole("用户")
-    public Result publishByUser(@RequestParam("content") String content,
-                                @RequestParam("title") String title,
-                                @RequestPart("files") String fileUrl,
-                                HttpServletRequest request) throws Exception {
-        if (content == null || content.trim().isEmpty()) {
+    public Result publishByUser(@RequestBody Post post, HttpServletRequest request) throws Exception {
+        if (post.getContent() == null || post.getContent().trim().isEmpty()) {
             return new Result(null, Code.SAVE_ERR, "内容不可为空!");
         }
-        if (title == null || title.trim().isEmpty()) {
+        if (post.getTitle() == null || post.getTitle().trim().isEmpty()) {
             return new Result(null, Code.SAVE_ERR, "标题不可为空!");
         }
-        if (fileUrl == null || fileUrl.trim().isEmpty()) {
+        if (post.getImgSrcList() == null || post.getImgSrcList().trim().isEmpty()) {
             return new Result(null, Code.SAVE_ERR, "请上传图片！");
         }
         //添加发布地址
@@ -69,8 +63,8 @@ public class UserPostController {
         //查询用户信息
         User user = userDao.selectOne(new LambdaQueryWrapper<User>().eq(User::getId, userId));
         //post对象
-        Post post = new Post(userId, createTime, title, content, addressInfo, fileUrl, user.getAvatar(), user.getUsername());
-        int flag = postDao.insert(post);
+        Post submitPost = new Post(userId, createTime, post.getTitle(),post.getContent(), addressInfo, post.getImgSrcList(), user.getAvatar(), user.getUsername());
+        int flag = postDao.insert(submitPost);
         Integer code = flag != 0 ? Code.SAVE_OK : Code.SAVE_ERR;
         String msg = flag != 0 ? "发布成功！" : "发布失败，请重试！";
         return new Result(null, code, msg);
