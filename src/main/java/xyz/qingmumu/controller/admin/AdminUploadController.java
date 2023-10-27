@@ -22,7 +22,6 @@ public class AdminUploadController {
     private static final String AVATAR_PATH = "Userpics/"; //头像oss目录
     private static final String POST_PATH = "Post/";  //动态oss目录
     private static final String ARTICLE_PATH = "Article/"; //文章oss目录
-
     /**
      * 头像上传
      *
@@ -31,7 +30,7 @@ public class AdminUploadController {
      * @throws IOException
      */
     @PostMapping("/uploadAvatar")
-    @SaCheckRole("管理员")
+    @SaCheckRole("用户")
     public Result upload(@RequestPart("avatar") MultipartFile avatar) throws IOException {
         UploadUtil uploadUtil = new UploadUtil();
         Result result = uploadUtil.singleImageUpload(avatar, AVATAR_PATH);
@@ -46,7 +45,7 @@ public class AdminUploadController {
      * @throws IOException
      */
     @PostMapping("/uploadPostImage")
-    @SaCheckRole("管理员")
+    @SaCheckRole("用户")
     public Result uploadPostImage(@RequestPart("files") MultipartFile[] files) throws IOException {
         if (files.length > 9) {
             return new Result(null, Code.SAVE_ERR, "图片不能超过九张！");
@@ -63,10 +62,10 @@ public class AdminUploadController {
      * @return
      */
     @PostMapping("/uploadArticleImage")
-    @SaCheckRole("管理员")
+    @SaCheckRole("用户")
     public Result uploadArticleImage(@RequestPart("cover") MultipartFile cover) throws IOException {
         UploadUtil uploadUtil = new UploadUtil();
-        Result result = uploadUtil.singleImageUpload(cover,ARTICLE_PATH);
+        Result result = uploadUtil.singleImageUpload(cover, ARTICLE_PATH);
         return result;
     }
 }

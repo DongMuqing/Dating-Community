@@ -43,8 +43,6 @@ public class UserPostController {
     @Autowired
     private UserDao userDao;
     @Autowired
-    private AliOSSUtils aliOSSUtils;
-    @Autowired
     private ResourceLoader resourceLoader;
 
     @PostMapping("/publish")

@@ -38,7 +38,7 @@ public class UserController {
     public Result editInfo(@RequestBody User user) {
         //排除掉权限字段
         User newUserInfo = new User(user.getAvatar(), user.getEmail(), user.getUsername(), user.getPassword());
-        userDao.update(newUserInfo, new UpdateWrapper<User>().lambda().eq(User::getId, user.getId()));
+        userDao.update(newUserInfo, new UpdateWrapper<User>().lambda().eq(User::getId,StpUtil.getLoginIdAsInt()));
         return new Result(null, Code.UPDATE_OK, "修改信息成功！");
     }
 
