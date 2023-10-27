@@ -36,7 +36,7 @@ public class UserArticleV1Controller {
     @PostMapping("/add")
     @SaCheckRole("用户")
     public Result addArticle(@RequestBody Article articles) {
-        articles.setUserId((Integer) StpUtil.getLoginId());
+        articles.setUserId(StpUtil.getLoginIdAsInt());
         int flag = articleDao.insert(articles);
         Integer code = flag != 0 ? Code.GET_OK : Code.GET_ERR;
         String msg = flag != 0 ? "添加成功" : "数据添加失败，请重试！";

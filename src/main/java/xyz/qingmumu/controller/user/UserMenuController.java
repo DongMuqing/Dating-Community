@@ -30,8 +30,6 @@ public class UserMenuController {
     private static final String USER_MENU = "user_backstage";
     @Autowired
     private MenuDao menuDao;
-    @Autowired
-    private UserDao userDao;
 
     /**
      * 获取后台导航栏
