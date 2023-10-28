@@ -30,7 +30,6 @@ public class UploadUtil {
         if (!IOUtil.isImage(image)) {
             return new Result(null, Code.SAVE_ERR, "此文件不是图片！");
         }
-//        AliOSSUtils aliOSSUtils = new AliOSSUtils();
         String url = aliOSSUtils.upload(image, uploadPath);
         return new Result(url, Code.SAVE_OK, "上传成功！");
     }
@@ -55,9 +54,7 @@ public class UploadUtil {
             i++;
         }
         List<String> fileUrl = new ArrayList<>();
-//        AliOSSUtils aliOSSUtils = new AliOSSUtils();
         for (MultipartFile file : files) {
-//            AliOSSUtils aliOSSUtils = new AliOSSUtils();
             String url = aliOSSUtils.upload(file, uploadPath);
             fileUrl.add(url);
         }

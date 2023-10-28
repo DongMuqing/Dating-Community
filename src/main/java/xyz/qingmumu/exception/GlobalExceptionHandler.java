@@ -2,6 +2,8 @@ package xyz.qingmumu.exception;
 
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotRoleException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 import xyz.qingmumu.entity.Code;
 import xyz.qingmumu.entity.Result;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -35,6 +37,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public Result illegalArgumentException() {
         return new Result(null,Code.SAVE_ERR,"请正确选择上传文件!");
+    }
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public Result httpRequestMethodNotSupportedException(){
+        return new Result(null,405,"请检查请求方式！");
     }
 }
 

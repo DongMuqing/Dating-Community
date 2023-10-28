@@ -29,15 +29,14 @@ public class AdminUploadController {
     /**
      * 头像上传
      *
-     * @param avatar
+     * @param files
      * @return
      * @throws IOException
      */
     @PostMapping("/uploadAvatar")
     @SaCheckRole("管理员")
-    public Result upload(@RequestPart("avatar") MultipartFile avatar) throws IOException {
-        Result result = uploadUtil.singleImageUpload(avatar, AVATAR_PATH);
-        return result;
+    public Result upload(@RequestPart("files") MultipartFile files) throws IOException {
+        return uploadUtil.singleImageUpload(files, AVATAR_PATH);
     }
 
     /**
@@ -53,20 +52,18 @@ public class AdminUploadController {
         if (files.length > 9) {
             return new Result(null, Code.SAVE_ERR, "图片不能超过九张！");
         }
-        Result result = uploadUtil.multipleImageUpload(files, POST_PATH);
-        return result;
+        return uploadUtil.multipleImageUpload(files, POST_PATH);
     }
 
     /**
      * 文章的图片上传
      *
-     * @param cover 封面
+     * @param files 封面
      * @return
      */
     @PostMapping("/uploadArticleImage")
     @SaCheckRole("管理员")
-    public Result uploadArticleImage(@RequestPart("cover") MultipartFile cover) throws IOException {
-        Result result = uploadUtil.singleImageUpload(cover,ARTICLE_PATH);
-        return result;
+    public Result uploadArticleImage(@RequestPart("files") MultipartFile files) throws IOException {
+        return uploadUtil.singleImageUpload(files,ARTICLE_PATH);
     }
 }

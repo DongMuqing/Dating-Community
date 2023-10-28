@@ -37,4 +37,13 @@ public class Article {
     @TableField(value = "create_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createTime;
+
+    public Article(Integer userId, String username, String cover, String title, String content, LocalDateTime createTime) {
+        this.userId = userId;
+        this.username = username;
+        this.cover = cover;
+        this.title = title;
+        this.content = content;
+        this.createTime = createTime;
+    }
 }

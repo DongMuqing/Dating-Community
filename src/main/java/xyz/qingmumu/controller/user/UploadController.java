@@ -33,9 +33,8 @@ public class UploadController {
      */
     @PostMapping("/uploadAvatar")
     @SaCheckRole("用户")
-    public Result upload(@RequestPart("avatar") MultipartFile avatar) throws IOException {
-        Result result = uploadUtil.singleImageUpload(avatar, AVATAR_PATH);
-        return result;
+    public Result upload(@RequestPart("files") MultipartFile avatar) throws IOException {
+        return uploadUtil.singleImageUpload(avatar, AVATAR_PATH);
     }
 
     /**
@@ -51,8 +50,7 @@ public class UploadController {
         if (files.length > 9) {
             return new Result(null, Code.SAVE_ERR, "图片不能超过九张！");
         }
-        Result result = uploadUtil.multipleImageUpload(files, POST_PATH);
-        return result;
+        return uploadUtil.multipleImageUpload(files, POST_PATH);
     }
 
     /**
@@ -63,8 +61,7 @@ public class UploadController {
      */
     @PostMapping("/uploadArticleImage")
     @SaCheckRole("用户")
-    public Result uploadArticleImage(@RequestPart("cover") MultipartFile cover) throws IOException {
-        Result result = uploadUtil.singleImageUpload(cover, ARTICLE_PATH);
-        return result;
+    public Result uploadArticleImage(@RequestPart("files") MultipartFile cover) throws IOException {
+        return uploadUtil.singleImageUpload(cover, ARTICLE_PATH);
     }
 }
