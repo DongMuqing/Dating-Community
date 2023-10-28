@@ -1,5 +1,5 @@
 FROM openjdk:17
-MAINTAINER susu
-ADD /target/Blog-system-0.0.1-SNAPSHOT.jar blog.jar
+MAINTAINER qingmumu
+ADD /target/Dating-Community-1.0.jar Dating.jar
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","blog.jar"]
+ENTRYPOINT ["java","-jar","Dating.jar"]
