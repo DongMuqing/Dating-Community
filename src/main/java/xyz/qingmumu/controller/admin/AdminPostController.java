@@ -34,7 +34,6 @@ import java.util.List;
 @Slf4j
 @SaCheckLogin
 public class AdminPostController {
-    private static final String POST_FILE_PATH = "Post/";
     @Autowired
     private PostDao postDao;
     @Autowired
@@ -60,38 +59,33 @@ public class AdminPostController {
     }
 
     /**
-     * 动态的发布
      *
-     * @param content 内容
-     * @param title   标题
-     * @param url     图片资源地址
+     * @param post 动态实体
      * @param request
      * @return
      * @throws Exception
      */
     @PostMapping("/publish")
     @SaCheckRole("管理员")
-    public Result publishByUser(@RequestParam("content") String content,
-                                @RequestParam("title") String title,
-                                @RequestPart("url") String url,
-                                HttpServletRequest request) throws Exception {
-        if (content == null || content.trim().isEmpty()) {
+    public Result publishByUser(@RequestBody Post post, HttpServletRequest request) throws Exception {
+        if (post.getContent() == null || post.getContent().trim().isEmpty()) {
             return new Result(null, Code.SAVE_ERR, "内容不可为空!");
         }
-        if (title == null || title.trim().isEmpty()) {
+        if (post.getTitle() == null || post.getTitle().trim().isEmpty()) {
             return new Result(null, Code.SAVE_ERR, "标题不可为空!");
         }
-        if (url == null || url.trim().isEmpty()) {
+        if (post.getImgSrcList() == null || post.getImgSrcList().trim().isEmpty()) {
             return new Result(null, Code.SAVE_ERR, "请上传图片！");
         }
-        String addressInfo = IpInfo.getAddress(request, resourceLoader); //添加发布地址
-        Integer userId = Integer.valueOf((String) StpUtil.getLoginId()); //发布用户id
-        LocalDateTime createTime = TimeUtil.getLocalDateTime(); //发布时间
+        //添加发布地址
+        String addressInfo = IpInfo.getAddress(request, resourceLoader);
+        Integer userId = StpUtil.getLoginIdAsInt();
+        LocalDateTime createTime = TimeUtil.getLocalDateTime();
         //查询用户信息
         User user = userDao.selectOne(new LambdaQueryWrapper<User>().eq(User::getId, userId));
         //post对象
-        Post post = new Post(userId, createTime, title, content, addressInfo, url, user.getAvatar(), user.getUsername());
-        int flag = postDao.insert(post);
+        Post submitPost = new Post(userId, createTime, post.getTitle(),post.getContent(), addressInfo, post.getImgSrcList(), user.getAvatar(), user.getUsername());
+        int flag = postDao.insert(submitPost);
         Integer code = flag != 0 ? Code.SAVE_OK : Code.SAVE_ERR;
         String msg = flag != 0 ? "发布成功！" : "发布失败，请重试！";
         return new Result(null, code, msg);

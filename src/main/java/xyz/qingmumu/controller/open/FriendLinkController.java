@@ -48,9 +48,8 @@ public class FriendLinkController {
     public Result upload(@RequestParam("url") String url,
                          @RequestParam("name") String name,
                          @RequestParam("intro") String intro,
-                         @RequestPart("logo") MultipartFile image) throws IOException {
-        String logoUrl = aliOSSUtils.upload(image, FOLDER_PATH);
-        FriendLink friendLink = new FriendLink(logoUrl, url, name, intro);
+                         @RequestParam("logo")  String image)  {
+        FriendLink friendLink = new FriendLink(image, url, name, intro);
         int friendLinks = friendLinkDao.insert(friendLink);
         Integer code = friendLinks != 0 ? Code.SAVE_OK : Code.SAVE_ERR;
         String msg = friendLinks != 0 ? "提交成功！" : "数据提交失败，请重试！";
