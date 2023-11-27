@@ -8,12 +8,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import xyz.qingmumu.dao.ArticleDao;
-import xyz.qingmumu.dao.UserDao;
-import xyz.qingmumu.entity.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import xyz.qingmumu.dao.ArticleDao;
+import xyz.qingmumu.dao.UserDao;
+import xyz.qingmumu.entity.Article;
+import xyz.qingmumu.entity.Code;
+import xyz.qingmumu.entity.Result;
+import xyz.qingmumu.entity.User;
 import xyz.qingmumu.util.TimeUtil;
 
 import java.util.HashMap;
@@ -33,20 +36,21 @@ public class AdminArticleV1Controller {
     private ArticleDao articleDao;
     @Autowired
     private UserDao userDao;
+
     @PostMapping("/add")
     @SaCheckRole("管理员")
     public Result addArticle(@RequestBody Article articles) {
-        if(articles.getTitle()==null ||articles.getTitle().trim().isEmpty()){
-            return new Result(null,Code.SAVE_ERR,"标题不可为空！");
+        if (articles.getTitle() == null || articles.getTitle().trim().isEmpty()) {
+            return new Result(null, Code.SAVE_ERR, "标题不可为空！");
         }
-        if(articles.getContent()==null ||articles.getContent().trim().isEmpty()){
-            return new Result(null,Code.SAVE_ERR,"内容不可为空！");
+        if (articles.getContent() == null || articles.getContent().trim().isEmpty()) {
+            return new Result(null, Code.SAVE_ERR, "内容不可为空！");
         }
-        if(articles.getCover()==null ||articles.getCover().trim().isEmpty()){
-            return new Result(null,Code.SAVE_ERR,"请上传封面！");
+        if (articles.getCover() == null || articles.getCover().trim().isEmpty()) {
+            return new Result(null, Code.SAVE_ERR, "请上传封面！");
         }
         User user = userDao.selectOne(new QueryWrapper<User>().lambda().eq(User::getId, StpUtil.getLoginIdAsInt()));
-        Article articleInfo = new Article(user.getId(),user.getUsername(),articles.getCover(),articles.getTitle(),articles.getContent(), TimeUtil.getLocalDateTime());
+        Article articleInfo = new Article(user.getId(), user.getUsername(), articles.getCover(), articles.getTitle(), articles.getContent(), TimeUtil.getLocalDateTime());
         int flag = articleDao.insert(articleInfo);
         Integer code = flag != 0 ? Code.GET_OK : Code.GET_ERR;
         String msg = flag != 0 ? "发布成功" : "发布失败，请重试！";
@@ -109,6 +113,7 @@ public class AdminArticleV1Controller {
             return new Result(null, Code.GET_ERR, "查询失败");
         }
     }
+
     /**
      * 获取所有文章时间降序
      *

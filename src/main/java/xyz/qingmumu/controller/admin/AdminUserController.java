@@ -8,13 +8,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import xyz.qingmumu.dao.UserDao;
 import xyz.qingmumu.entity.Code;
 import xyz.qingmumu.entity.Result;
 import xyz.qingmumu.entity.User;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
@@ -51,6 +51,7 @@ public class AdminUserController {
 
     /**
      * 修改用户信息 进行提权
+     *
      * @param user
      * @return
      */
@@ -64,6 +65,7 @@ public class AdminUserController {
 
     /**
      * 根据id删除用户
+     *
      * @param id 用户id
      * @return
      */

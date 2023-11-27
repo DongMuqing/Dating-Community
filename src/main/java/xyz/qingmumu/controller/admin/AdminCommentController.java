@@ -3,20 +3,17 @@ package xyz.qingmumu.controller.admin;
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import xyz.qingmumu.dao.CommentDao;
 import xyz.qingmumu.entity.Code;
 import xyz.qingmumu.entity.Comment;
 import xyz.qingmumu.entity.Result;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import xyz.qingmumu.entity.User;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * @Date:2023/8/11 0:11
@@ -42,7 +39,7 @@ public class AdminCommentController {
                          @RequestParam(defaultValue = "10") long size) {
         LambdaQueryWrapper<Comment> commentLambdaQueryWrapper = new LambdaQueryWrapper<>();
         //查询指定字段
-        commentLambdaQueryWrapper.select(Comment::getCommentId,Comment::getAvatar,Comment::getPostId,Comment::getUsername,Comment::getContent,Comment::getCreateTime,Comment::getAddress)
+        commentLambdaQueryWrapper.select(Comment::getCommentId, Comment::getAvatar, Comment::getPostId, Comment::getUsername, Comment::getContent, Comment::getCreateTime, Comment::getAddress)
                 .orderBy(true, false, Comment::getCreateTime);
         Page<Comment> commentPage = new Page<>(current, size);
         IPage<Comment> commentIPage = commentDao.selectPage(commentPage, commentLambdaQueryWrapper);

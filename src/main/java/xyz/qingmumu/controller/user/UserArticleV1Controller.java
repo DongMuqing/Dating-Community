@@ -8,19 +8,18 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import xyz.qingmumu.dao.ArticleDao;
 import xyz.qingmumu.dao.UserDao;
 import xyz.qingmumu.entity.Article;
 import xyz.qingmumu.entity.Code;
 import xyz.qingmumu.entity.Result;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 import xyz.qingmumu.entity.User;
 import xyz.qingmumu.util.TimeUtil;
 
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * @Date:2023/6/9 17:46
@@ -40,17 +39,17 @@ public class UserArticleV1Controller {
     @PostMapping("/add")
     @SaCheckRole("用户")
     public Result addArticle(@RequestBody Article articles) {
-        if(articles.getTitle()==null ||articles.getTitle().trim().isEmpty()){
-            return new Result(null,Code.SAVE_ERR,"标题不可为空！");
+        if (articles.getTitle() == null || articles.getTitle().trim().isEmpty()) {
+            return new Result(null, Code.SAVE_ERR, "标题不可为空！");
         }
-        if(articles.getContent()==null ||articles.getContent().trim().isEmpty()){
-            return new Result(null,Code.SAVE_ERR,"内容不可为空！");
+        if (articles.getContent() == null || articles.getContent().trim().isEmpty()) {
+            return new Result(null, Code.SAVE_ERR, "内容不可为空！");
         }
-        if(articles.getCover()==null ||articles.getCover().trim().isEmpty()){
-            return new Result(null,Code.SAVE_ERR,"请上传封面！");
+        if (articles.getCover() == null || articles.getCover().trim().isEmpty()) {
+            return new Result(null, Code.SAVE_ERR, "请上传封面！");
         }
         User user = userDao.selectOne(new QueryWrapper<User>().lambda().eq(User::getId, StpUtil.getLoginIdAsInt()));
-        Article articleInfo = new Article(user.getId(),user.getUsername(),articles.getCover(),articles.getTitle(),articles.getContent(), TimeUtil.getLocalDateTime());
+        Article articleInfo = new Article(user.getId(), user.getUsername(), articles.getCover(), articles.getTitle(), articles.getContent(), TimeUtil.getLocalDateTime());
         int flag = articleDao.insert(articleInfo);
         Integer code = flag != 0 ? Code.GET_OK : Code.GET_ERR;
         String msg = flag != 0 ? "发布成功" : "发布失败，请重试！";
@@ -104,7 +103,7 @@ public class UserArticleV1Controller {
     @SaCheckRole("用户")
     public Result getArticleByUserId(@RequestParam(defaultValue = "1") long current,
                                      @RequestParam(defaultValue = "10") long size) {
-       return getUserArticle(current, size);
+        return getUserArticle(current, size);
     }
 
     /**
@@ -119,11 +118,12 @@ public class UserArticleV1Controller {
 
     /**
      * 查询当前用户的文章并按时间降序排
+     *
      * @return
      */
-    public Result getUserArticle(long current,long size) {
+    public Result getUserArticle(long current, long size) {
         LambdaQueryWrapper<Article> articleLambdaQueryWrapper = Wrappers.lambdaQuery();
-        articleLambdaQueryWrapper.eq(Article::getUserId,StpUtil.getLoginIdAsInt()).orderBy(true, false, Article::getCreateTime);
+        articleLambdaQueryWrapper.eq(Article::getUserId, StpUtil.getLoginIdAsInt()).orderBy(true, false, Article::getCreateTime);
         Page<Article> articlePage = new Page<>(current, size);
         IPage<Article> articleIPage = articleDao.selectPage(articlePage, articleLambdaQueryWrapper);
         HashMap<String, Object> postMap = new HashMap<>();

@@ -3,13 +3,6 @@ package xyz.qingmumu.controller.open;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
-import xyz.qingmumu.dao.VisitorInfoDao;
-import xyz.qingmumu.entity.Code;
-import xyz.qingmumu.entity.Result;
-import xyz.qingmumu.entity.VisitorInfo;
-import xyz.qingmumu.util.IPUtil;
-import xyz.qingmumu.util.IpInfo;
-import xyz.qingmumu.util.TimeUtil;
 import eu.bitwalker.useragentutils.UserAgent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +11,13 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import xyz.qingmumu.dao.VisitorInfoDao;
+import xyz.qingmumu.entity.Code;
+import xyz.qingmumu.entity.Result;
+import xyz.qingmumu.entity.VisitorInfo;
+import xyz.qingmumu.util.IPUtil;
+import xyz.qingmumu.util.IpInfo;
+import xyz.qingmumu.util.TimeUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;

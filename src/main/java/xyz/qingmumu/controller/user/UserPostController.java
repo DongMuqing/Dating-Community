@@ -16,7 +16,6 @@ import xyz.qingmumu.dao.CommentDao;
 import xyz.qingmumu.dao.PostDao;
 import xyz.qingmumu.dao.UserDao;
 import xyz.qingmumu.entity.*;
-import xyz.qingmumu.util.AliOSSUtils;
 import xyz.qingmumu.util.IpInfo;
 import xyz.qingmumu.util.TimeUtil;
 
@@ -63,7 +62,7 @@ public class UserPostController {
         //查询用户信息
         User user = userDao.selectOne(new LambdaQueryWrapper<User>().eq(User::getId, userId));
         //post对象
-        Post submitPost = new Post(userId, createTime, post.getTitle(),post.getContent(), addressInfo, post.getImgSrcList(), user.getAvatar(), user.getUsername());
+        Post submitPost = new Post(userId, createTime, post.getTitle(), post.getContent(), addressInfo, post.getImgSrcList(), user.getAvatar(), user.getUsername());
         int flag = postDao.insert(submitPost);
         Integer code = flag != 0 ? Code.SAVE_OK : Code.SAVE_ERR;
         String msg = flag != 0 ? "发布成功！" : "发布失败，请重试！";

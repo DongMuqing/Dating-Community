@@ -3,14 +3,13 @@ package xyz.qingmumu.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;
-import org.springframework.beans.factory.annotation.Autowired;
-import xyz.qingmumu.entity.Code;
-import xyz.qingmumu.entity.Result;
-import xyz.qingmumu.util.AliOSSUtils;
-import xyz.qingmumu.util.UploadUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import xyz.qingmumu.entity.Code;
+import xyz.qingmumu.entity.Result;
+import xyz.qingmumu.util.UploadUtil;
 
 import java.io.IOException;
 
@@ -20,11 +19,11 @@ import java.io.IOException;
 @Slf4j
 @SaCheckLogin
 public class AdminUploadController {
-    @Autowired
-    private UploadUtil uploadUtil;
     private static final String AVATAR_PATH = "Userpics/"; //头像oss目录
     private static final String POST_PATH = "Post/";  //动态oss目录
     private static final String ARTICLE_PATH = "Article/"; //文章oss目录
+    @Autowired
+    private UploadUtil uploadUtil;
 
     /**
      * 头像上传
@@ -64,6 +63,6 @@ public class AdminUploadController {
     @PostMapping("/uploadArticleImage")
     @SaCheckRole("管理员")
     public Result uploadArticleImage(@RequestPart("files") MultipartFile files) throws IOException {
-        return uploadUtil.singleImageUpload(files,ARTICLE_PATH);
+        return uploadUtil.singleImageUpload(files, ARTICLE_PATH);
     }
 }

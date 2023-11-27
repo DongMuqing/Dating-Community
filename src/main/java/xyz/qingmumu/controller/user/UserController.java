@@ -5,13 +5,13 @@ import cn.dev33.satoken.annotation.SaCheckRole;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.util.SaResult;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 import xyz.qingmumu.dao.UserDao;
 import xyz.qingmumu.entity.Code;
 import xyz.qingmumu.entity.Result;
 import xyz.qingmumu.entity.User;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * @Date:2023/8/2 22:59
@@ -38,7 +38,7 @@ public class UserController {
     public Result editInfo(@RequestBody User user) {
         //排除掉权限字段
         User newUserInfo = new User(user.getAvatar(), user.getEmail(), user.getUsername(), user.getPassword());
-        userDao.update(newUserInfo, new UpdateWrapper<User>().lambda().eq(User::getId,StpUtil.getLoginIdAsInt()));
+        userDao.update(newUserInfo, new UpdateWrapper<User>().lambda().eq(User::getId, StpUtil.getLoginIdAsInt()));
         return new Result(null, Code.UPDATE_OK, "修改信息成功！");
     }
 

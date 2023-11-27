@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.sun.jna.platform.unix.LibC;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +38,7 @@ public class UserCommentController {
     private PostDao postDao;
     @Autowired
     private UserDao userDao;
+
     /**
      * 获取所有的评论
      *
@@ -62,8 +62,8 @@ public class UserCommentController {
         String in = String.join(",", postId);
         Page<Comment> commentPage = new Page<>(current, size);
         LambdaQueryWrapper<Comment> userCommentLambdaQueryWrapper = new LambdaQueryWrapper<>();
-        userCommentLambdaQueryWrapper.select(Comment::getCommentId,Comment::getAvatar,Comment::getPostId,Comment::getUsername,Comment::getContent,Comment::getCreateTime,Comment::getAddress)
-                .in(Comment::getPostId,in)
+        userCommentLambdaQueryWrapper.select(Comment::getCommentId, Comment::getAvatar, Comment::getPostId, Comment::getUsername, Comment::getContent, Comment::getCreateTime, Comment::getAddress)
+                .in(Comment::getPostId, in)
                 .orderBy(true, false, Comment::getCreateTime);
         IPage<Comment> commentIPage = commentDao.selectPage(commentPage, userCommentLambdaQueryWrapper);
         HashMap<String, Object> userMap = new HashMap<>();

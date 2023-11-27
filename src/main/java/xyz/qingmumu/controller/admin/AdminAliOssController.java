@@ -45,11 +45,10 @@ public class AdminAliOssController {
      *
      * @param path
      * @return
-     * @throws Exception
      */
     @PostMapping("/filepath")
     @SaCheckRole("管理员")
-    public Result getFilePath(@RequestParam String path) throws Exception {
+    public Result getFilePath(@RequestParam String path)  {
         path.substring(path.length() - 1);
         List<AliOss> filepath = aliOSSUtils.ListRequest(path);
         Integer code = filepath != null ? Code.GET_OK : Code.GET_ERR;
@@ -82,11 +81,10 @@ public class AdminAliOssController {
     /**
      * @param path 需要删除的文件路径
      * @return
-     * @throws Exception
      */
     @PostMapping("/delete")
     @SaCheckRole("管理员")
-    public Result delete(@RequestParam String path) throws Exception {
+    public Result delete(@RequestParam String path)  {
         boolean delete = aliOSSUtils.delete(path);
         if (delete) {
             return new Result(null, Code.DELETE_OK, "删除成功!");
@@ -101,13 +99,12 @@ public class AdminAliOssController {
      *
      * @param path
      * @return
-     * @throws Exception
      */
     @PostMapping("/paging")
     @SaCheckRole("管理员")
     public Result paging(@RequestParam String path,
                          @RequestParam(defaultValue = "1") Long page,
-                         @RequestParam(defaultValue = "10") Integer maxkey) throws Exception {
+                         @RequestParam(defaultValue = "10") Integer maxkey)  {
         Paging<AliOss> aliOssPaging = aliOSSUtils.pagingEnumeration(path, page, maxkey);
         if (aliOssPaging != null) {
             return new Result(aliOssPaging, Code.GET_OK, "查询成功!");

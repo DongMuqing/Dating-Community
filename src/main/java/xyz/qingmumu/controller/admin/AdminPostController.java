@@ -59,8 +59,7 @@ public class AdminPostController {
     }
 
     /**
-     *
-     * @param post 动态实体
+     * @param post    动态实体
      * @param request
      * @return
      * @throws Exception
@@ -84,7 +83,7 @@ public class AdminPostController {
         //查询用户信息
         User user = userDao.selectOne(new LambdaQueryWrapper<User>().eq(User::getId, userId));
         //post对象
-        Post submitPost = new Post(userId, createTime, post.getTitle(),post.getContent(), addressInfo, post.getImgSrcList(), user.getAvatar(), user.getUsername());
+        Post submitPost = new Post(userId, createTime, post.getTitle(), post.getContent(), addressInfo, post.getImgSrcList(), user.getAvatar(), user.getUsername());
         int flag = postDao.insert(submitPost);
         Integer code = flag != 0 ? Code.SAVE_OK : Code.SAVE_ERR;
         String msg = flag != 0 ? "发布成功！" : "发布失败，请重试！";

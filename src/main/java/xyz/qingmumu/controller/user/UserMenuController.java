@@ -2,17 +2,16 @@ package xyz.qingmumu.controller.user;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import xyz.qingmumu.dao.MenuDao;
-import xyz.qingmumu.dao.UserDao;
-import xyz.qingmumu.entity.Code;
-import xyz.qingmumu.entity.Menu;
-import xyz.qingmumu.entity.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import xyz.qingmumu.dao.MenuDao;
+import xyz.qingmumu.entity.Code;
+import xyz.qingmumu.entity.Menu;
+import xyz.qingmumu.entity.Result;
 
 import java.util.List;
 

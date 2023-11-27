@@ -2,14 +2,14 @@ package xyz.qingmumu.controller.admin;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckRole;
-import xyz.qingmumu.entity.Code;
-import xyz.qingmumu.entity.Result;
-import xyz.qingmumu.entity.Server;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import xyz.qingmumu.entity.Code;
+import xyz.qingmumu.entity.Result;
+import xyz.qingmumu.entity.Server;
 
 /**
  * @Date:2023/8/19 21:34

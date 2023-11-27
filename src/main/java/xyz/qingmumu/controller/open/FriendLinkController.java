@@ -2,17 +2,14 @@ package xyz.qingmumu.controller.open;
 
 import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaIgnore;
-import xyz.qingmumu.entity.Code;
-import xyz.qingmumu.entity.FriendLink;
-import xyz.qingmumu.entity.Result;
-import xyz.qingmumu.dao.FriendLinkDao;
-import xyz.qingmumu.util.AliOSSUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import xyz.qingmumu.dao.FriendLinkDao;
+import xyz.qingmumu.entity.Code;
+import xyz.qingmumu.entity.FriendLink;
+import xyz.qingmumu.entity.Result;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -27,11 +24,6 @@ import java.util.List;
 public class FriendLinkController {
     @Autowired
     private FriendLinkDao friendLinkDao;
-    @Autowired
-    private AliOSSUtils aliOSSUtils;
-
-    //上传指定的文件夹
-    private static final String FOLDER_PATH = "Blog/friendlink/";
 
     @GetMapping
     @SaIgnore
@@ -48,7 +40,7 @@ public class FriendLinkController {
     public Result upload(@RequestParam("url") String url,
                          @RequestParam("name") String name,
                          @RequestParam("intro") String intro,
-                         @RequestParam("logo")  String image)  {
+                         @RequestParam("logo") String image) {
         FriendLink friendLink = new FriendLink(image, url, name, intro);
         int friendLinks = friendLinkDao.insert(friendLink);
         Integer code = friendLinks != 0 ? Code.SAVE_OK : Code.SAVE_ERR;
